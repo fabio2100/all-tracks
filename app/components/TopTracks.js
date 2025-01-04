@@ -10,6 +10,7 @@ const TopTracks = () => {
   const [tracks, setTracks] = useState([]);
   const [totalTracks, setTotalTracks] = useState(false);
   const access_token = searchParams.get('access_token');
+  const isDevelopment = process.env.NEXT_PUBLIC_DEVELOPMENT === '1';
 
   useEffect(() => {
     const fetchTopTracks = async (offset = 0) => {
@@ -36,9 +37,10 @@ const TopTracks = () => {
         setTracks(prevTracks => [...prevTracks, ...response.data.items]);
 
         // Si aún no se han obtenido todas las pistas, realiza otra petición
-        if (offset + 50 < response.data.total) {
+        if ((offset + 50 < response.data.total) && !(isDevelopment && offset >= 100)) {
           fetchTopTracks(offset + 50);
-        }
+      }
+      
       } catch (error) {
         console.error('Error fetching top tracks:', error);
       }
