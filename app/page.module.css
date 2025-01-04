@@ -166,3 +166,9 @@ a.secondary {
     filter: invert();
   }
 }
+
+.divHome{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}

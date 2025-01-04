@@ -52,7 +52,7 @@ const TopTracks = () => {
 
   return (
     <div>
-      <h1>Tus pistas escuchadas</h1>
+      <h1 style={{marginTop:".5em",marginBottom:"0.25em"}}>Tus pistas escuchadas</h1>
       <Lista items={tracks}/>
     </div>
   );

@@ -2,6 +2,8 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import styles from "./page.module.css";
+
 
 export default function Start() {
     const router = useRouter();
@@ -23,8 +25,7 @@ export default function Start() {
     };
 
     return (
-        <div>
-            <h1>Bienvenido a la App</h1>
+        <div className={styles.page}>
             {isLoggedIn ? (
                 <p>Logueado con Spotify</p>
             ) : (

@@ -1,7 +1,9 @@
 import TopTracksWrapper from "../components/TopTracksWrapper";
-
+import styles from "../page.module.css"
 export default function home() {
   return (
-    <TopTracksWrapper />
+    <div className={styles.divHome}>
+      <TopTracksWrapper/>
+    </div>
   );
 }
