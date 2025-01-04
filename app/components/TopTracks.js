@@ -4,6 +4,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Lista from './Lista';
 
 const TopTracks = () => {
   const searchParams = useSearchParams();
@@ -51,14 +52,8 @@ const TopTracks = () => {
 
   return (
     <div>
-      <h1>Tus pistas más escuchadas a largo plazo</h1>
-      <ul>
-        {tracks.map((track, index) => (
-          <li key={track.id}>
-            {index + 1} {track.name} - {track.artists.map(artist => artist.name).join(', ')}
-          </li>
-        ))}
-      </ul>
+      <h1>Tus pistas escuchadas</h1>
+      <Lista items={tracks}/>
     </div>
   );
 };
