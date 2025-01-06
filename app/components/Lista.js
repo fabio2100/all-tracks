@@ -7,7 +7,7 @@ import Avatar from "@mui/material/Avatar";
 import { makeStyles } from "@mui/styles";
 const useStyles = makeStyles((theme) => ({
   secondary: {
-    color: "#686868", // Cambia a tu color deseado
+    color: "#989898", // Cambia a tu color deseado
     fontStyle: "italic",
   },
 }));
