@@ -172,3 +172,48 @@ a.secondary {
   flex-direction: row;
   justify-content: center;
 }
+
+
+.customButton {
+  background-color: #0BAD02;
+  color: black;
+  font-weight: 550;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  cursor: pointer;
+
+}
+
+.button-icon {
+  margin-right: 8px;
+}
+
+.buttonText {
+  font-size: 16px;
+}
+
+.customButton:hover {
+  background-color: #067400;
+}
+
+.logout {
+  cursor: pointer;
+  color: #0BAD02;
+  font-weight: bold;
+}
+
+.header .logout:hover {
+  color: #09a201;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
