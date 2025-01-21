@@ -2,10 +2,11 @@
 
 import { Suspense } from 'react';
 import TopTracks from './TopTracks';
+import { CircularProgress } from '@mui/material';
 
 const TopTracksWrapper = () => {
   return (
-    <Suspense fallback={<div>Cargando...</div>}>
+    <Suspense fallback={<div><CircularProgress color='success' /></div>}>
       <TopTracks />
     </Suspense>
   );

@@ -16,7 +16,7 @@ export default function Lista({ items }) {
   const classes = useStyles();
   return (
     <List sx={{ width: "100%", maxWidth: 360 }}>
-      {items.map((item, index) => (
+      {items.slice(0,100).map((item, index) => (
         <ListItem
           key={item.id}
           sx={{ bgcolor: "#1e1e1e", marginBottom: "1em", borderRadius: "12px" }}

@@ -7,7 +7,7 @@ export async function GET(req, res) {
     let redirectPath = null
     const { searchParams } = new URL(req.url);
     const code = searchParams.get('code');
-console.log('code', code)
+    
     if (!code) {
         redirectPath = `/`;
     }
