@@ -65,65 +65,67 @@ const TopTracks = () => {
   }, [access_token]);
 
   useEffect(() => {
-    //if((tracks.length === estadisticas.totalTracks) ){
     if (tracks.length > 0) {
-      const trackCountByArtist = tracks.reduce((acc, track) => {
-        track.artists.forEach((artist) => {
-          if (!acc[artist.name]) {
-            acc[artist.name] = 0;
-          }
-          acc[artist.name]++;
-        });
-        return acc;
-      }, {});
-console.log('------------------------------------')
-      const longestTrack = tracks.reduce(
-        (longest, track) =>
-          track.duration_ms > longest.duration_ms ? track : longest,
-        tracks[0]
-      );
-      const shortestTrack = tracks.reduce(
-        (shortest, track) =>
-          track.duration_ms < shortest.duration_ms ? track : shortest,
-        tracks[0]
-      );
-      // Canción con más y menos popularidad
-      const mostPopularTrack = tracks.reduce(
-        (mostPopular, track) =>
-          track.popularity > mostPopular.popularity ? track : mostPopular,
-        tracks[0]
-      );
-      const leastPopularTrack = tracks.reduce(
-        (leastPopular, track) =>
-          track.popularity < leastPopular.popularity ? track : leastPopular,
-        tracks[0]
-      );
-      // Canción con más artistas
-      const trackWithMostArtists = tracks.reduce(
-        (mostArtists, track) =>
-          track.artists.length > mostArtists.artists.length
-            ? track
-            : mostArtists,
-        tracks[0]
-      );
-      console.log("Canción más larga:", longestTrack);
-      console.log("Canción más corta:", shortestTrack);
-      console.log("Canción con más popularidad:", mostPopularTrack);
-      console.log("Canción con menos popularidad:", leastPopularTrack);
-      console.log("Canción con más artistas:", trackWithMostArtists);
+        const trackCountByArtist = tracks.reduce((acc, track) => {
+            track.artists.forEach((artist) => {
+                if (!acc[artist.name]) {
+                    acc[artist.name] = 0;
+                }
+                acc[artist.name]++;
+            });
+            return acc;
+        }, {});
+        
+        const longestTrack = tracks.reduce(
+            (longest, track) =>
+                track.duration_ms > longest.duration_ms ? track : longest,
+            tracks[0]
+        );
+        const shortestTrack = tracks.reduce(
+            (shortest, track) =>
+                track.duration_ms < shortest.duration_ms ? track : shortest,
+            tracks[0]
+        );
 
-      const sortedArtists = Object.entries(trackCountByArtist)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 100);
+        const maxPopularity = Math.max(...tracks.map(track => track.popularity));
+        const minPopularity = Math.min(...tracks.map(track => track.popularity));
+        
+        const mostPopularTracks = tracks.filter(track => track.popularity === maxPopularity);
+        const leastPopularTracks = tracks.filter(track => track.popularity === minPopularity);
 
-      setTotalEstadisticas((prevEstadisticas) => ({
-        ...prevEstadisticas,
-        artists: sortedArtists,
-        totalPistasChecked: tracks.length,
-        totalArtists: Object.keys(trackCountByArtist).length,
-      }));
+        const maxArtistsCount = Math.max(...tracks.map(track => track.artists.length));
+        const tracksWithMostArtists = tracks.filter(track => track.artists.length === maxArtistsCount);
+
+        console.log("Canción más larga:", longestTrack);
+        console.log("Canción más corta:", shortestTrack);
+        console.log("Canciones con más popularidad:", mostPopularTracks);
+        console.log("Canciones con menos popularidad:", leastPopularTracks);
+        console.log("Canciones con más artistas:", tracksWithMostArtists);
+
+        const sortedArtists = Object.entries(trackCountByArtist)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 100);
+
+        setTotalEstadisticas((prevEstadisticas) => ({
+            ...prevEstadisticas,
+            artists: sortedArtists,
+            totalPistasChecked: tracks.length,
+            totalArtists: Object.keys(trackCountByArtist).length,
+            longestTrack,
+            shortestTrack,
+            mostPopularTracks,
+            leastPopularTracks,
+            tiempoMasLarga: longestTrack.duration_ms,
+            tiempoMasCorta: shortestTrack.duration_ms,
+            maxPopularity,
+            minPopularity,
+            maxArtistsCount,
+            tracksWithMostArtists
+        }));
     }
-  }, [tracks]);
+}, [tracks]);
+
+
 
   const handleLogout = () => {
     router.push("/");
@@ -145,6 +147,16 @@ console.log('------------------------------------')
       <p>Total de pistas: {estadisticas.totalTracks}</p>
       <p>Total de Pistas analizadas: {estadisticas.totalPistasChecked}</p>
       <p>Total de artistas: {estadisticas.totalArtists}</p>
+      <p>Canción más larga: {estadisticas.longestTrack?.name}</p>
+      <p>Tiempo de la canción más larga: {estadisticas.tiempoMasLarga}</p>
+      <p>Canción más corta: {estadisticas.shortestTrack?.name}</p>
+      <p>Tiempo de la canción más corta: {estadisticas.tiempoMasCorta}</p>
+      <p>Canciones con más popularidad: {estadisticas.mostPopularTracks?.map(track => track.name).join(', ')}</p>
+      <p>Valor de popularidad de las canciones más populares: {estadisticas.maxPopularity}</p>
+      <p>Canciones con menos popularidad: {estadisticas.leastPopularTracks?.map(track => track.name).join(', ')}</p>
+      <p>Valor de popularidad de las canciones menos populares: {estadisticas.minPopularity}</p>
+      <p>Canciones con más artistas: {estadisticas.tracksWithMostArtists?.map(track => track.name).join(', ')}</p>
+      <p>Cantidad de artistas en las canciones con más artistas: {estadisticas.maxArtistsCount}</p>
       <ul>
         {Object.entries(estadisticas.artists).map(([artist, count]) => (
           <li key={artist}>
