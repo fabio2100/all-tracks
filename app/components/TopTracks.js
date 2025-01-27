@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import Lista from "./Lista";
 import { useRouter } from "next/navigation";
 import styles from "../page.module.css";
+import { LinearProgress } from "@mui/material";
 
 const TopTracks = () => {
   const router = useRouter();
@@ -122,6 +123,7 @@ const TopTracks = () => {
             maxArtistsCount,
             tracksWithMostArtists
         }));
+        console.log(tracks)
     }
 }, [tracks]);
 
@@ -132,7 +134,7 @@ const TopTracks = () => {
   };
 
   return (
-    <div>
+    <div className={styles.main}>
       <div className={styles.header}>
         <h2 style={{ marginTop: ".5em", marginBottom: "0.25em" }}>
           Tus pistas escuchadas
@@ -146,6 +148,7 @@ const TopTracks = () => {
       </h2>
       <p>Total de pistas: {estadisticas.totalTracks}</p>
       <p>Total de Pistas analizadas: {estadisticas.totalPistasChecked}</p>
+      <LinearProgress variant="determinate" color="success" sx={{height:15,borderRadius:3}} value={estadisticas.totalPistasChecked*100/estadisticas.totalTracks}/>
       <p>Total de artistas: {estadisticas.totalArtists}</p>
       <p>Canción más larga: {estadisticas.longestTrack?.name}</p>
       <p>Tiempo de la canción más larga: {estadisticas.tiempoMasLarga}</p>
