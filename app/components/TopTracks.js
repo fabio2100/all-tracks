@@ -7,7 +7,6 @@ import Lista from "./Lista";
 import { useRouter } from "next/navigation";
 import styles from "../page.module.css";
 import { LinearProgress } from "@mui/material";
-import MediaCard from "./MediaCard";
 import ShowSimpleData from "./ShowSimpleData";
 
 const TopTracks = () => {
