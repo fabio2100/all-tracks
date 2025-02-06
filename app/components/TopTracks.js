@@ -7,6 +7,8 @@ import Lista from "./Lista";
 import { useRouter } from "next/navigation";
 import styles from "../page.module.css";
 import { LinearProgress } from "@mui/material";
+import MediaCard from "./MediaCard";
+import ShowSimpleData from "./ShowSimpleData";
 
 const TopTracks = () => {
   const router = useRouter();
@@ -146,6 +148,14 @@ const TopTracks = () => {
       <h2 style={{ marginTop: ".5em", marginBottom: "0.25em" }}>
         Estadísticas
       </h2>
+      
+      <div className={styles.containerSimpleData}>
+      <ShowSimpleData title="Total de pistas" value={estadisticas.totalTracks} />
+      <ShowSimpleData title="Total de Pistas analizadas" value={estadisticas.totalPistasChecked} />
+      <ShowSimpleData title="Total de artistas" value={estadisticas.totalArtists} />
+      <ShowSimpleData title="Canción más larga" value={estadisticas.longestTrack?.name} />
+      </div>
+      
       <p>Total de pistas: {estadisticas.totalTracks}</p>
       <p>Total de Pistas analizadas: {estadisticas.totalPistasChecked}</p>
       <LinearProgress variant="determinate" color="success" sx={{height:15,borderRadius:3}} value={estadisticas.totalPistasChecked*100/estadisticas.totalTracks}/>

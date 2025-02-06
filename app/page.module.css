@@ -225,3 +225,9 @@ a.secondary {
   align-items: center;
   width: 100%;
 }
+
+.containerSimpleData{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
