@@ -134,6 +134,12 @@ const TopTracks = () => {
     router.push("/");
   };
 
+  function convertMsToMinutesSeconds(ms) {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${minutes}m${seconds}s`;
+}
+
   return (
     <div className={styles.main}>
       <div className={styles.header}>
@@ -160,9 +166,9 @@ const TopTracks = () => {
       <LinearProgress variant="determinate" color="success" sx={{height:15,borderRadius:3}} value={estadisticas.totalPistasChecked*100/estadisticas.totalTracks}/>
       <p>Total de artistas: {estadisticas.totalArtists}</p>
       <p>Canción más larga: {estadisticas.longestTrack?.name}</p>
-      <p>Tiempo de la canción más larga: {estadisticas.tiempoMasLarga}</p>
+      <p>Tiempo de la canción más larga: {convertMsToMinutesSeconds(estadisticas.tiempoMasLarga)}</p>
       <p>Canción más corta: {estadisticas.shortestTrack?.name}</p>
-      <p>Tiempo de la canción más corta: {estadisticas.tiempoMasCorta}</p>
+      <p>Tiempo de la canción más corta: {convertMsToMinutesSeconds(estadisticas.tiempoMasCorta)}</p>
       <p>Canciones con más popularidad: {estadisticas.mostPopularTracks?.map(track => track.name).join(', ')}</p>
       <p>Valor de popularidad de las canciones más populares: {estadisticas.maxPopularity}</p>
       <p>Canciones con menos popularidad: {estadisticas.leastPopularTracks?.map(track => track.name).join(', ')}</p>
