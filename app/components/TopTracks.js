@@ -158,17 +158,13 @@ const TopTracks = () => {
       <ShowSimpleData title="Total de pistas" value={estadisticas.totalTracks} />
       <ShowSimpleData title="Total de Pistas analizadas" value={estadisticas.totalPistasChecked} />
       <ShowSimpleData title="Total de artistas" value={estadisticas.totalArtists} />
-      <ShowSimpleData title="Canción más larga" value={estadisticas.longestTrack?.name} />
+      <ShowSimpleData title="Canción más larga" value={estadisticas.longestTrack?.name} secondary={convertMsToMinutesSeconds(estadisticas.tiempoMasLarga)}/>
+      <ShowSimpleData title="Canción más corta" value={estadisticas.shortestTrack?.name} secondary={convertMsToMinutesSeconds(estadisticas.tiempoMasCorta)}/>
+      <ShowSimpleData title="Canción más popular" value={estadisticas.mostPopularTracks?.[0].name} secondary={`Popularidad: ${estadisticas.mostPopularTracks?.[0].popularity}`}/>
+      
       </div>
       
-      <p>Total de pistas: {estadisticas.totalTracks}</p>
-      <p>Total de Pistas analizadas: {estadisticas.totalPistasChecked}</p>
       <LinearProgress variant="determinate" color="success" sx={{height:15,borderRadius:3}} value={estadisticas.totalPistasChecked*100/estadisticas.totalTracks}/>
-      <p>Total de artistas: {estadisticas.totalArtists}</p>
-      <p>Canción más larga: {estadisticas.longestTrack?.name}</p>
-      <p>Tiempo de la canción más larga: {convertMsToMinutesSeconds(estadisticas.tiempoMasLarga)}</p>
-      <p>Canción más corta: {estadisticas.shortestTrack?.name}</p>
-      <p>Tiempo de la canción más corta: {convertMsToMinutesSeconds(estadisticas.tiempoMasCorta)}</p>
       <p>Canciones con más popularidad: {estadisticas.mostPopularTracks?.map(track => track.name).join(', ')}</p>
       <p>Valor de popularidad de las canciones más populares: {estadisticas.maxPopularity}</p>
       <p>Canciones con menos popularidad: {estadisticas.leastPopularTracks?.map(track => track.name).join(', ')}</p>

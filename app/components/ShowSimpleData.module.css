@@ -1,4 +1,8 @@
 .main{
+    display: flex;
+    align-items: center;
     border: 1px solid #555555;
     border-radius: 8px;
+    max-width: 10em;
+    padding: 1em;
 }
