@@ -228,7 +228,11 @@ const TopTracks = () => {
         ))}
       </ul>
       <ul>
-        {estadisticas.sortedByPopularityCut?.map((track)=>(<li  key={track.id} style={{width:track.popularity+"%"}} className={styles.popularityItem}>{track.name} , {track.artists.map(artist=>artist.name)} , {track.popularity}</li>))}
+        {estadisticas.sortedByPopularityCut?.map((track)=>(
+          <li  key={track.id} style={{width:track.popularity+"%"}} className={styles.popularityItem}>
+            <p>{track.name} , </p>
+            <p>{track.artists.map(artist=>artist.name)} , {track.popularity}
+            </p></li>))}
       </ul>
       <Lista items={tracks} />     
     </div>
