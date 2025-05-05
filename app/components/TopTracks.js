@@ -77,7 +77,6 @@ const TopTracks = () => {
         });
         return acc;
       }, {});
-
       const longestTrack = tracks.reduce(
         (longest, track) =>
           track.duration_ms > longest.duration_ms ? track : longest,
@@ -120,6 +119,11 @@ const TopTracks = () => {
         .sort((a, b) => b[1] - a[1])
         .slice(0, 100);
 
+        let sortedByPopularity = [];
+        sortedByPopularity = [...tracks];
+      sortedByPopularity.sort((a,b)=>b.popularity-a.popularity)
+      const sortedByPopularityCut = sortedByPopularity.slice(0,10);
+
       setTotalEstadisticas((prevEstadisticas) => ({
         ...prevEstadisticas,
         artists: sortedArtists,
@@ -135,6 +139,7 @@ const TopTracks = () => {
         minPopularity,
         maxArtistsCount,
         tracksWithMostArtists,
+        sortedByPopularityCut
       }));
       console.log(tracks);
     }
@@ -205,22 +210,6 @@ const TopTracks = () => {
         />
       )}
       <p>
-        Canciones con más popularidad:{" "}
-        {estadisticas.mostPopularTracks?.map((track) => track.name).join(", ")}
-      </p>
-      <p>
-        Valor de popularidad de las canciones más populares:{" "}
-        {estadisticas.maxPopularity}
-      </p>
-      <p>
-        Canciones con menos popularidad:{" "}
-        {estadisticas.leastPopularTracks?.map((track) => track.name).join(", ")}
-      </p>
-      <p>
-        Valor de popularidad de las canciones menos populares:{" "}
-        {estadisticas.minPopularity}
-      </p>
-      <p>
         Canciones con más artistas:{" "}
         {estadisticas.tracksWithMostArtists
           ?.map((track) => track.name)
@@ -237,7 +226,7 @@ const TopTracks = () => {
           </li>
         ))}
       </ul>
-      <Lista items={tracks} />
+      <Lista items={tracks} />     
     </div>
   );
 };
