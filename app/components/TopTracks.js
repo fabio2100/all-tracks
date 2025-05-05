@@ -122,7 +122,8 @@ const TopTracks = () => {
         let sortedByPopularity = [];
         sortedByPopularity = [...tracks];
       sortedByPopularity.sort((a,b)=>b.popularity-a.popularity)
-      const sortedByPopularityCut = sortedByPopularity.slice(0,10);
+      const sortedByPopularityCut = sortedByPopularity.slice(0,100);
+      console.log({sortedByPopularityCut})
 
       setTotalEstadisticas((prevEstadisticas) => ({
         ...prevEstadisticas,
@@ -225,6 +226,9 @@ const TopTracks = () => {
             {artist}: {count}
           </li>
         ))}
+      </ul>
+      <ul>
+        {estadisticas.sortedByPopularityCut?.map((track)=>(<li  key={track.id} style={{width:track.popularity+"%"}} className={styles.popularityItem}>{track.name} , {track.artists.map(artist=>artist.name)} , {track.popularity}</li>))}
       </ul>
       <Lista items={tracks} />     
     </div>

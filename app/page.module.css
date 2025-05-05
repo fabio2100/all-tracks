@@ -231,3 +231,8 @@ a.secondary {
   align-items: center;
   justify-content: space-around;
 }
+
+.popularityItem{
+  background-color: #0BAD02;
+  border-radius: 12px;
+}
