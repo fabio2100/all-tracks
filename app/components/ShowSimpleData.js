@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import styles from "./showSimpleData.module.css";
+import styles from "./ShowSimpleData.module.css";
 
 
 export default function ShowSimpleData({title,value,secondary}){
