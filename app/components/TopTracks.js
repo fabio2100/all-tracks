@@ -109,11 +109,6 @@ const TopTracks = () => {
         (track) => track.artists.length === maxArtistsCount
       );
 
-      console.log("Canción más larga:", longestTrack);
-      console.log("Canción más corta:", shortestTrack);
-      console.log("Canciones con más popularidad:", mostPopularTracks);
-      console.log("Canciones con menos popularidad:", leastPopularTracks);
-      console.log("Canciones con más artistas:", tracksWithMostArtists);
 
       const sortedArtists = Object.entries(trackCountByArtist)
         .sort((a, b) => b[1] - a[1])
@@ -123,7 +118,6 @@ const TopTracks = () => {
         sortedByPopularity = [...tracks];
       sortedByPopularity.sort((a,b)=>b.popularity-a.popularity)
       const sortedByPopularityCut = sortedByPopularity.slice(0,100);
-      console.log({sortedByPopularityCut})
 
       setTotalEstadisticas((prevEstadisticas) => ({
         ...prevEstadisticas,
@@ -142,7 +136,7 @@ const TopTracks = () => {
         tracksWithMostArtists,
         sortedByPopularityCut
       }));
-      console.log(tracks);
+      
     }
   }, [tracks]);
 
@@ -217,6 +211,24 @@ const TopTracks = () => {
         </tbody>
       </table>
 
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Nª</th>
+            <th>Artista</th>
+            <th>Número de canciones</th>
+          </tr>
+        </thead>
+        <tbody>
+        {Object.entries(estadisticas.artists).map((item) => (
+          <tr>
+            <td>{Number(item[0])+1}</td>
+            <td>{item[1][0]}</td>
+            <td>{item[1][1]}</td>
+          </tr>
+        ))}
+        </tbody>
+      </table>
 
 
     
