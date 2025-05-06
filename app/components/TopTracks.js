@@ -170,70 +170,70 @@ const TopTracks = () => {
         Estadísticas
       </h2>
 
-      <div className={styles.containerSimpleData}>
-        <ShowSimpleData
-          title="Total de pistas"
-          value={estadisticas.totalTracks}
-        />
-        <ShowSimpleData
-          title="Total de Pistas analizadas"
-          value={estadisticas.totalPistasChecked}
-        />
-        <ShowSimpleData
-          title="Total de artistas"
-          value={estadisticas.totalArtists}
-        />
-        <ShowSimpleData
-          title="Canción más larga"
-          value={estadisticas.longestTrack?.name}
-          secondary={convertMsToMinutesSeconds(estadisticas.tiempoMasLarga)}
-        />
-        <ShowSimpleData
-          title="Canción más corta"
-          value={estadisticas.shortestTrack?.name}
-          secondary={convertMsToMinutesSeconds(estadisticas.tiempoMasCorta)}
-        />
-        <ShowSimpleData
-          title="Canción más popular"
-          value={estadisticas.mostPopularTracks?.[0].name}
-          secondary={`Popularidad: ${estadisticas.mostPopularTracks?.[0].popularity}`}
-        />
-      </div>
-
       {estadisticas.totalPistasChecked !== estadisticas.totalTracks && (
-        <LinearProgress
-          variant="determinate"
-          color="success"
-          sx={{ height: 15, borderRadius: 3 }}
-          value={
+        <progress
+        className="progress is-success is-small"  
+        value={
             (estadisticas.totalPistasChecked * 100) / estadisticas.totalTracks
           }
+          max={100}
         />
       )}
-      <p>
-        Canciones con más artistas:{" "}
-        {estadisticas.tracksWithMostArtists
+
+      <table className="table">
+        <tbody>
+          <tr>
+            <td>Total de pistas</td>
+            <td>{estadisticas.totalTracks}</td>
+          </tr>
+          {estadisticas.totalTracks !== estadisticas.totalPistasChecked &&
+              <tr>
+              <td>Total de pistas analizadas</td>
+              <td>{estadisticas.totalPistasChecked}</td>
+          </tr>
+          }
+                 
+          <tr>
+            <td>Total de artistas</td>
+            <td>{estadisticas.totalArtists}</td>
+          </tr>
+          <tr>
+            <td>Canción más larga</td>
+            <td><p>{estadisticas.longestTrack?.name}</p>
+               <p>{convertMsToMinutesSeconds(estadisticas.tiempoMasLarga)}</p></td>
+          </tr>
+          <tr>
+            <td>Canción más corta</td>
+            <td><p>{estadisticas.shortestTrack?.name}</p>
+            <p>{convertMsToMinutesSeconds(estadisticas.tiempoMasCorta)}</p></td>
+          </tr>
+          <tr>
+            <td>Canción con más artistas</td>
+            <td><p>{estadisticas.tracksWithMostArtists
           ?.map((track) => track.name)
-          .join(", ")}
-      </p>
-      <p>
-        Cantidad de artistas en las canciones con más artistas:{" "}
-        {estadisticas.maxArtistsCount}
-      </p>
-      <ul>
+          .join(", ")}</p><p>Número de artistas: {estadisticas.maxArtistsCount}</p></td>
+          </tr>
+          
+        </tbody>
+      </table>
+
+
+
+    
+    <ol>
         {Object.entries(estadisticas.artists).map(([artist, count]) => (
           <li key={artist}>
-            {artist}: {count}
+            {`${artist}:  ${count}`}
           </li>
         ))}
-      </ul>
-      <ul>
+      </ol>
+      <ol type="1">
         {estadisticas.sortedByPopularityCut?.map((track)=>(
           <li  key={track.id} style={{width:track.popularity+"%"}} className={styles.popularityItem}>
-            <p>{track.name} , </p>
-            <p>{track.artists.map(artist=>artist.name)} , {track.popularity}
+            <p>{track.name} , {track.artists.map(artist=>artist.name)} </p>
+            <p> {track.popularity}
             </p></li>))}
-      </ul>
+      </ol>
       <Lista items={tracks} />     
     </div>
   );
