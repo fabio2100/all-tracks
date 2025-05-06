@@ -231,21 +231,6 @@ const TopTracks = () => {
       </table>
 
 
-    
-    <ol>
-        {Object.entries(estadisticas.artists).map(([artist, count]) => (
-          <li key={artist}>
-            {`${artist}:  ${count}`}
-          </li>
-        ))}
-      </ol>
-      <ol type="1">
-        {estadisticas.sortedByPopularityCut?.map((track)=>(
-          <li  key={track.id} style={{width:track.popularity+"%"}} className={styles.popularityItem}>
-            <p>{track.name} , {track.artists.map(artist=>artist.name)} </p>
-            <p> {track.popularity}
-            </p></li>))}
-      </ol>
       <Lista items={tracks} />     
     </div>
   );
