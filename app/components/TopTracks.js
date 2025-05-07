@@ -6,8 +6,6 @@ import { useSearchParams } from "next/navigation";
 import Lista from "./Lista";
 import { useRouter } from "next/navigation";
 import styles from "../page.module.css";
-import { LinearProgress } from "@mui/material";
-import ShowSimpleData from "./ShowSimpleData";
 
 const TopTracks = () => {
   const router = useRouter();
@@ -119,6 +117,8 @@ const TopTracks = () => {
       sortedByPopularity.sort((a,b)=>b.popularity-a.popularity)
       const sortedByPopularityCut = sortedByPopularity.slice(0,100);
 
+      const maxSongsByArtist = sortedArtists[0][1]
+
       setTotalEstadisticas((prevEstadisticas) => ({
         ...prevEstadisticas,
         artists: sortedArtists,
@@ -134,7 +134,8 @@ const TopTracks = () => {
         minPopularity,
         maxArtistsCount,
         tracksWithMostArtists,
-        sortedByPopularityCut
+        sortedByPopularityCut,
+        maxSongsByArtist
       }));
       
     }
@@ -168,7 +169,7 @@ const TopTracks = () => {
         <progress
         className="progress is-success is-small"  
         value={
-            (estadisticas.totalPistasChecked * 100) / estadisticas.totalTracks
+            (estadisticas?.totalPistasChecked * 100) / estadisticas?.totalTracks
           }
           max={100}
         />
@@ -193,19 +194,23 @@ const TopTracks = () => {
           </tr>
           <tr>
             <td>Canción más larga</td>
-            <td><p>{estadisticas.longestTrack?.name}</p>
-               <p>{convertMsToMinutesSeconds(estadisticas.tiempoMasLarga)}</p></td>
+            <td><p>{estadisticas.longestTrack?.name} By {estadisticas.longestTrack?.artists.map(artist=>artist.name)}</p>
+               <p>{convertMsToMinutesSeconds(estadisticas?.tiempoMasLarga)}</p></td>
           </tr>
           <tr>
             <td>Canción más corta</td>
-            <td><p>{estadisticas.shortestTrack?.name}</p>
-            <p>{convertMsToMinutesSeconds(estadisticas.tiempoMasCorta)}</p></td>
+            <td><p>{estadisticas.shortestTrack?.name} By {estadisticas.shortestTrack?.artists.map(artist=>artist.name)}</p>
+            <p>{convertMsToMinutesSeconds(estadisticas?.tiempoMasCorta)}</p></td>
           </tr>
           <tr>
             <td>Canción con más artistas</td>
             <td><p>{estadisticas.tracksWithMostArtists
           ?.map((track) => track.name)
-          .join(", ")}</p><p>Número de artistas: {estadisticas.maxArtistsCount}</p></td>
+          .join(", ")}</p><p>Número de artistas: {estadisticas?.maxArtistsCount}</p>
+          <small>{estadisticas.tracksWithMostArtists?.map((track)=>
+            track?.artists?.map(artist=>artist.name).join(", ")
+          )}</small>
+          </td>
           </tr>
           
         </tbody>
@@ -216,17 +221,39 @@ const TopTracks = () => {
           <tr>
             <th>Nª</th>
             <th>Artista</th>
-            <th>Número de canciones</th>
+            <th>Canciones</th>
+            <th>Número</th>
           </tr>
         </thead>
         <tbody>
         {Object.entries(estadisticas.artists).map((item) => (
-          <tr>
+          <tr key={item[0]}>
             <td>{Number(item[0])+1}</td>
             <td>{item[1][0]}</td>
-            <td>{item[1][1]}</td>
+            <td><div className={styles.divNroCanciones}><progress
+        className="progress is-success is-small"  
+        value={
+            item[1][1] ? item[1][1] : 0
+          }
+          max={estadisticas.maxSongsByArtist}
+        /></div></td>
+        <td>{item[1][1]}</td>
           </tr>
         ))}
+        </tbody>
+      </table>
+
+      <table className="table">
+      <thead>
+          <tr>
+            <th>Nª</th>
+            <th>Canción</th>
+            <th>Popularidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          {estadisticas.sortedByPopularityCut?.map((track,index)=>
+          <tr key={track.id}><td>{index+1}</td><td>{track.name} By {track.artists.map(artist=>artist.name).join(", ")}</td><td><progress className="progress is-success is-small" value={track?.popularity} max={100}/></td></tr>)}
         </tbody>
       </table>
 

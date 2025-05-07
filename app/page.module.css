@@ -236,3 +236,7 @@ a.secondary {
   background-color: #0BAD02;
   border-radius: 12px;
 }
+
+.divNroCanciones{
+  display: flex;
+}
