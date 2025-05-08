@@ -107,17 +107,16 @@ const TopTracks = () => {
         (track) => track.artists.length === maxArtistsCount
       );
 
-
       const sortedArtists = Object.entries(trackCountByArtist)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 100);
 
-        let sortedByPopularity = [];
-        sortedByPopularity = [...tracks];
-      sortedByPopularity.sort((a,b)=>b.popularity-a.popularity)
-      const sortedByPopularityCut = sortedByPopularity.slice(0,100);
+      let sortedByPopularity = [];
+      sortedByPopularity = [...tracks];
+      sortedByPopularity.sort((a, b) => b.popularity - a.popularity);
+      const sortedByPopularityCut = sortedByPopularity.slice(0, 100);
 
-      const maxSongsByArtist = sortedArtists[0][1]
+      const maxSongsByArtist = sortedArtists[0][1];
 
       setTotalEstadisticas((prevEstadisticas) => ({
         ...prevEstadisticas,
@@ -135,9 +134,8 @@ const TopTracks = () => {
         maxArtistsCount,
         tracksWithMostArtists,
         sortedByPopularityCut,
-        maxSongsByArtist
+        maxSongsByArtist,
       }));
-      
     }
   }, [tracks]);
 
@@ -167,98 +165,146 @@ const TopTracks = () => {
 
       {estadisticas.totalPistasChecked !== estadisticas.totalTracks && (
         <progress
-        className="progress is-success is-small"  
-        value={
+          className="progress is-success is-small"
+          value={
             (estadisticas?.totalPistasChecked * 100) / estadisticas?.totalTracks
           }
           max={100}
         />
       )}
-
+<div className="columns">
+  <div className="column">
       <table className="table">
         <tbody>
           <tr>
             <td>Total de pistas</td>
             <td>{estadisticas.totalTracks}</td>
           </tr>
-          {estadisticas.totalTracks !== estadisticas.totalPistasChecked &&
-              <tr>
+          {estadisticas.totalTracks !== estadisticas.totalPistasChecked && (
+            <tr>
               <td>Total de pistas analizadas</td>
               <td>{estadisticas.totalPistasChecked}</td>
-          </tr>
-          }
-                 
+            </tr>
+          )}
+
           <tr>
             <td>Total de artistas</td>
             <td>{estadisticas.totalArtists}</td>
           </tr>
+          </tbody>
+          </table>
+          </div>
+          <div className="column">
+          <table className="table">
+            <tbody>
           <tr>
             <td>Canción más larga</td>
-            <td><p>{estadisticas.longestTrack?.name} By {estadisticas.longestTrack?.artists.map(artist=>artist.name)}</p>
-               <p>{convertMsToMinutesSeconds(estadisticas?.tiempoMasLarga)}</p></td>
+            <td>
+              <p>
+                {estadisticas.longestTrack?.name} By{" "}
+                {estadisticas.longestTrack?.artists.map(
+                  (artist) => artist.name
+                )}
+              </p>
+              <p>{convertMsToMinutesSeconds(estadisticas?.tiempoMasLarga)}</p>
+            </td>
           </tr>
           <tr>
             <td>Canción más corta</td>
-            <td><p>{estadisticas.shortestTrack?.name} By {estadisticas.shortestTrack?.artists.map(artist=>artist.name)}</p>
-            <p>{convertMsToMinutesSeconds(estadisticas?.tiempoMasCorta)}</p></td>
+            <td>
+              <p>
+                {estadisticas.shortestTrack?.name} By{" "}
+                {estadisticas.shortestTrack?.artists.map(
+                  (artist) => artist.name
+                )}
+              </p>
+              <p>{convertMsToMinutesSeconds(estadisticas?.tiempoMasCorta)}</p>
+            </td>
           </tr>
           <tr>
             <td>Canción con más artistas</td>
-            <td><p>{estadisticas.tracksWithMostArtists
-          ?.map((track) => track.name)
-          .join(", ")}</p><p>Número de artistas: {estadisticas?.maxArtistsCount}</p>
-          <small>{estadisticas.tracksWithMostArtists?.map((track)=>
-            track?.artists?.map(artist=>artist.name).join(", ")
-          )}</small>
-          </td>
+            <td>
+              <p>
+                {estadisticas.tracksWithMostArtists
+                  ?.map((track) => track.name)
+                  .join(", ")}
+              </p>
+              <p>Número de artistas: {estadisticas?.maxArtistsCount}</p>
+              <small>
+                {estadisticas.tracksWithMostArtists?.map((track) =>
+                  track?.artists?.map((artist) => artist.name).join(", ")
+                )}
+              </small>
+            </td>
           </tr>
-          
         </tbody>
       </table>
-
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Nª</th>
-            <th>Artista</th>
-            <th>Canciones</th>
-            <th>Número</th>
-          </tr>
-        </thead>
-        <tbody>
-        {Object.entries(estadisticas.artists).map((item) => (
-          <tr key={item[0]}>
-            <td>{Number(item[0])+1}</td>
-            <td>{item[1][0]}</td>
-            <td><div className={styles.divNroCanciones}><progress
-        className="progress is-success is-small"  
-        value={
-            item[1][1] ? item[1][1] : 0
-          }
-          max={estadisticas.maxSongsByArtist}
-        /></div></td>
-        <td>{item[1][1]}</td>
-          </tr>
-        ))}
-        </tbody>
-      </table>
-
-      <table className="table">
-      <thead>
-          <tr>
-            <th>Nª</th>
-            <th>Canción</th>
-            <th>Popularidad</th>
-          </tr>
-        </thead>
-        <tbody>
-          {estadisticas.sortedByPopularityCut?.map((track,index)=>
-          <tr key={track.id}><td>{index+1}</td><td>{track.name} By {track.artists.map(artist=>artist.name).join(", ")}</td><td><progress className="progress is-success is-small" value={track?.popularity} max={100}/></td></tr>)}
-        </tbody>
-      </table>
-
-
-      <Lista items={tracks} />     
+      </div>
+      </div>
+      <div className="columns">
+        <div className="column">
+          <h1>Canciones por artista</h1>
+          <table className="table is-fullwidth">
+            <thead>
+              <tr>
+                <th style={{ width: "10%" }}>Nª</th>
+                <th style={{ width: "40%" }}>Artista</th>
+                <th style={{ width: "40%" }}>Canciones</th>
+                <th style={{ width: "10%" }}>Número</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(estadisticas.artists).map((item) => (
+                <tr key={item[0]}>
+                  <td>{Number(item[0]) + 1}</td>
+                  <td>{item[1][0]}</td>
+                  <td>
+                    <div className={styles.divNroCanciones}>
+                      <progress
+                        className="progress is-success is-small"
+                        value={item[1][1] ? item[1][1] : 0}
+                        max={estadisticas.maxSongsByArtist}
+                      />
+                    </div>
+                  </td>
+                  <td>{item[1][1]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="column">
+          <h1>Canciones con más popularidad</h1>
+          <table className="table is-fullwidth">
+            <thead>
+              <tr>
+                <th>Nª</th>
+                <th>Canción</th>
+                <th>Popularidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              {estadisticas.sortedByPopularityCut?.map((track, index) => (
+                <tr key={track.id}>
+                  <td>{index + 1}</td>
+                  <td>
+                    {track.name} By{" "}
+                    {track.artists.map((artist) => artist.name).join(", ")}
+                  </td>
+                  <td>
+                    <progress
+                      className="progress is-success is-small"
+                      value={track?.popularity}
+                      max={100}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <Lista items={tracks} />
     </div>
   );
 };
