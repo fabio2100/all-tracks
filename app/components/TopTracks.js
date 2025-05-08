@@ -302,9 +302,26 @@ const TopTracks = () => {
               ))}
             </tbody>
           </table>
+          
         </div>
+        <div className="column">
+            <h1>Tus pistas más escuchadas</h1>
+              <table className="table is-fullwidth">
+                <thead>
+                  <tr>
+                    <th>Nª</th>
+                    <th>Canción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {
+                    tracks.map((track,index)=>(<tr key={`table2${track.id}`}><td>{index+1}</td><td>{track.name} By {track.artists.map(artist=>artist.name).join(', ')}</td></tr>)).slice(0,100)
+                  }
+                </tbody>
+              </table>
+          </div>
       </div>
-      <Lista items={tracks} />
+      
     </div>
   );
 };
