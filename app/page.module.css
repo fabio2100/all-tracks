@@ -175,11 +175,7 @@ a.secondary {
   }
 }
 
-.divHome{
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
+
 
 
 .customButton {
