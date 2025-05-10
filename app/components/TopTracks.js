@@ -3,12 +3,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import Lista from "./Lista";
-import { useRouter } from "next/navigation";
 import styles from "../page.module.css";
 
 const TopTracks = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [tracks, setTracks] = useState([]);
   const [estadisticas, setTotalEstadisticas] = useState({
@@ -139,9 +136,6 @@ const TopTracks = () => {
     }
   }, [tracks]);
 
-  const handleLogout = () => {
-    router.push("/");
-  };
 
   function convertMsToMinutesSeconds(ms) {
     const minutes = Math.floor(ms / 60000);
@@ -151,14 +145,6 @@ const TopTracks = () => {
 
   return (
     <div className={styles.main}>
-      <div className={styles.header}>
-        <h2 style={{ marginTop: ".5em", marginBottom: "0.25em" }}>
-          Tus pistas escuchadas
-        </h2>
-        <p className={styles.logout} onClick={handleLogout}>
-          Logout
-        </p>
-      </div>
       <h2 style={{ marginTop: ".5em", marginBottom: "0.25em" }}>
         Estadísticas
       </h2>

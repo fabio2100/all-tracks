@@ -236,3 +236,11 @@ a.secondary {
 .divNroCanciones{
   display: flex;
 }
+
+.visible {
+  display: block;
+}
+
+.noVisible {
+  display: none;
+}
