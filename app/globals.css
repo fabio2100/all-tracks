@@ -42,3 +42,8 @@ a {
     color-scheme: dark;
   }
 }
+
+.tabs li.is-active a {
+  color: #48c78e !important; /* Color de is-success */
+  border-bottom: 3px solid #48c78e !important; /* Borde inferior del tab */
+}

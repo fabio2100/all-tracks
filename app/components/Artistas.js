@@ -2,12 +2,23 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 
+
 export default function Artistas() {
   const access_token = Cookies.get("spotify_access_token");
   const [originalArtistas, setOriginalArtistas] = useState([]);
   const [sortedByFollowers, setSortedByFollowers] = useState([]);
   const [sortedByPopularity, setSortedByPopularity] = useState([]);
   const [genres, setGenres] = useState([]);
+
+  const seguidoresAUnidades = (cantidad) => {
+    if (Math.floor(cantidad) / 1000000 > 1) {
+      return `${Math.floor(cantidad / 1000000)} M`;
+    }
+    if (Math.floor(cantidad) / 1000 > 1) {
+      return `${Math.floor(cantidad / 1000)} k`;
+    }
+    return cantidad;
+  };
 
   useEffect(() => {
     if (!access_token) return;
@@ -20,10 +31,13 @@ export default function Artistas() {
 
       try {
         while (hasMore) {
-          const response = await axios.get("https://api.spotify.com/v1/me/top/artists", {
-            params: { time_range: "long_term", limit, offset },
-            headers: { Authorization: `Bearer ${access_token}` },
-          });
+          const response = await axios.get(
+            "https://api.spotify.com/v1/me/top/artists",
+            {
+              params: { time_range: "long_term", limit, offset },
+              headers: { Authorization: `Bearer ${access_token}` },
+            }
+          );
 
           if (response.data.items.length > 0) {
             allArtists = [...allArtists, ...response.data.items];
@@ -34,8 +48,12 @@ export default function Artistas() {
         }
 
         setOriginalArtistas(allArtists); // Guardamos la lista original en el estado
-        setSortedByFollowers([...allArtists].sort((a, b) => b.followers.total - a.followers.total));
-        setSortedByPopularity([...allArtists].sort((a, b) => b.popularity - a.popularity));
+        setSortedByFollowers(
+          [...allArtists].sort((a, b) => b.followers.total - a.followers.total)
+        );
+        setSortedByPopularity(
+          [...allArtists].sort((a, b) => b.popularity - a.popularity)
+        );
         processGenres(allArtists);
       } catch (error) {
         console.error("Error en la petición:", error);
@@ -64,35 +82,74 @@ export default function Artistas() {
   return (
     <div>
       <h1>Artistas</h1>
-<div className="columns">
-  <div className="column">
-      <h2>Lista Original (Según Spotify)</h2>
-      <ol>
-        {originalArtistas.map((artista) => (
-          <li key={artista.id}>{artista.name}</li>
-        ))}
-      </ol>
-      </div>
-      <div className="column">
-      <h2>Ordenados por seguidores</h2>
-      <ol>
-        {sortedByFollowers.map((artista) => (
-          <li key={artista.id}>
-            {artista.name} - {artista.followers.total} seguidores
-          </li>
-        ))}
-      </ol>
-      </div>
-      <div className="column">
-      <h2>Ordenados por popularidad</h2>
-      <ol>
-        {sortedByPopularity.map((artista) => (
-          <li key={artista.id}>
-            {artista.name} - Popularidad: {artista.popularity}
-          </li>
-        ))}
-      </ol>
-      </div>
+      <div className="columns">
+        <div className="column">
+          <h2>Tus artistas más escuchados</h2>
+          <div className="table">
+            {console.log(originalArtistas)}
+            {originalArtistas.map((artista, index) => (
+              /*<li key={artista.id}>{artista.name}</li>*/
+              <div key={artista.id}>
+                <div className="card">
+                  <div className="card-content">
+                    <div className="media">
+                      <div className="media-left">
+                        <figure className="image is-48x48">
+                          <img
+                            style={{ borderRadius: "10px" }}
+                            src={artista.images[0]?.url}
+                            alt="Artist image"
+                          />
+                        </figure>
+                      </div>
+                      <div className="media-content">
+                        <p className="title is-4">{artista.name}</p>
+                        <p className="subtitle is-size-6">
+                          popularidad:{" "}
+                          <progress
+                            className="is-small"
+                            value={artista.popularity}
+                            max={100}
+                          />{" "}
+                          <br />
+                          seguidores:{" "}
+                          {seguidoresAUnidades(artista.followers.total)} <br />
+                          géneros:{" "}
+                          {artista.genres?.map((genre) => genre).join(", ")}
+                        </p>
+                      </div>
+                      <div className="media-rigth">
+                        <p>{index + 1}</p>
+                        <a href={artista.external_urls?.spotify}>Play</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="column">
+          <h2>Ordenados por seguidores</h2>
+          <ol>
+            {sortedByFollowers.map((artista) => (
+              <li key={artista.id}>
+                {artista.name} - {seguidoresAUnidades(artista.followers.total)}{" "}
+                seguidores
+              </li>
+            ))}
+          </ol>
+        </div>
+        <div className="column">
+          <h2>Ordenados por popularidad</h2>
+          <ol>
+            {sortedByPopularity.map((artista) => (
+              <li key={artista.id}>
+                {artista.name} - Popularidad: {artista.popularity}
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
       <h2>Géneros más escuchados</h2>
       <ol>
