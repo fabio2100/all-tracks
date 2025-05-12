@@ -27,8 +27,7 @@ export async function GET(req, res) {
             },
         });
 
-        const { access_token, refresh_token } = response.data;
-        redirectPath = `/home?access_token=${access_token}&refresh_token=${refresh_token}`;
+        redirectPath = `/home`;
         cookieStore.set("spotify_access_token",response.data.access_token,{maxAge: 3600})
         cookieStore.set("spotify_refresh_token",response.data.refresh_token,{maxAge:604800})
     } catch (error) {
