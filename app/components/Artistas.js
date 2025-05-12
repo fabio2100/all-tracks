@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { ScatterChart } from "@mui/x-charts";
 
 
 export default function Artistas() {
@@ -86,7 +87,6 @@ export default function Artistas() {
         <div className="column">
           <h2>Tus artistas más escuchados</h2>
           <div className="table">
-            {console.log(originalArtistas)}
             {originalArtistas.map((artista, index) => (
               /*<li key={artista.id}>{artista.name}</li>*/
               <div key={artista.id}>
@@ -159,6 +159,11 @@ export default function Artistas() {
           </li>
         ))}
       </ol>
+
+      <ScatterChart
+        height={300}
+        series={[{label: 'Dispersión seguidores popularidad',data: originalArtistas.map((artist)=>({y:artist.popularity,x:artist.followers.total,id:artist.id}))}]}
+      />
     </div>
   );
 }
