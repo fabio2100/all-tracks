@@ -1,16 +1,55 @@
 "use client";
-import { Suspense, useState } from "react";
-import TopTracksWrapper from "../components/TopTracksWrapper";
+import { useEffect, useState } from "react";
 import styles from "../page.module.css";
 import { useRouter } from "next/navigation";
 import Artistas from "../components/Artistas";
-import { CircularProgress } from "@mui/material";
+import Cookies from "js-cookie";
+import axios from "axios";
+import TopTracks from "../components/TopTracks";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState("canciones");
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState("canciones");
+
+  useEffect(() => {
+    const checkTokens = async () => {
+      const srtCookie = Cookies.get("spotify_refresh_token");
+      if (!srtCookie) {
+        Cookies.remove("spotify_access_token");
+        router.push("/");
+        return;
+      }
+
+      if (!Cookies.get("spotify_access_token")) {
+        try {
+          const response = await axios.post("/api/refreshToken", {
+            refresh_token: srtCookie,
+          });
+
+          if (response.data.access_token) {
+            Cookies.set("spotify_access_token", response.data.access_token, {
+              expires: 1 / 24, // Expira en 1 hora
+            });
+
+            Cookies.set("spotify_refresh_token", srtCookie, { expires: 7 }); 
+          } else {
+            Cookies.remove("spotify_refresh_token");
+            router.push("/");
+          }
+        } catch (error) {
+          console.error("Error obteniendo nuevo access_token:", error);
+          Cookies.remove("spotify_refresh_token");
+          router.push("/");
+        }
+      }
+    };
+
+    checkTokens();
+  }, []); 
 
   const handleLogout = () => {
+    Cookies.remove("spotify_access_token");
+    Cookies.remove("spotify_refresh_token");
     router.push("/");
   };
 
@@ -39,26 +78,11 @@ export default function Home() {
 
         {/* Contenido dinámico basado en la pestaña seleccionada */}
         <div className="content">
-          {console.log(activeTab)}
-          <div
-            style={
-              activeTab === "canciones"
-                ? { display: "block" }
-                : { display: "none " }
-            }
-          >
-            <TopTracksWrapper />
+          <div style={activeTab === "canciones" ? { display: "block" } : { display: "none " }}>
+            <TopTracks />
           </div>
-          <div
-            style={
-              activeTab === "artistas"
-                ? { display: "block" }
-                : { display: "none" }
-            }
-          >
-            <Suspense fallback={<div><CircularProgress color='success' /></div>}>
-              <Artistas />
-            </Suspense>
+          <div style={activeTab === "artistas" ? { display: "block" } : { display: "none" }}>
+              <Artistas />         
           </div>
         </div>
       </div>

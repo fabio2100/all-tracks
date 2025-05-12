@@ -1,10 +1,9 @@
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export default function Artistas() {
-  const searchParams = useSearchParams();
-  const access_token = searchParams.get("access_token");
+  const access_token = Cookies.get("spotify_access_token");
   const [originalArtistas, setOriginalArtistas] = useState([]);
   const [sortedByFollowers, setSortedByFollowers] = useState([]);
   const [sortedByPopularity, setSortedByPopularity] = useState([]);

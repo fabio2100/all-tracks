@@ -2,12 +2,13 @@
 
 import axios from 'axios';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 
 export async function GET(req, res) {
+    const cookieStore = await cookies();
     let redirectPath = null
     const { searchParams } = new URL(req.url);
     const code = searchParams.get('code');
-    
     if (!code) {
         redirectPath = `/`;
     }
@@ -28,6 +29,8 @@ export async function GET(req, res) {
 
         const { access_token, refresh_token } = response.data;
         redirectPath = `/home?access_token=${access_token}&refresh_token=${refresh_token}`;
+        cookieStore.set("spotify_access_token",response.data.access_token,{maxAge: 3600})
+        cookieStore.set("spotify_refresh_token",response.data.refresh_token,{maxAge:604800})
     } catch (error) {
         console.error('Error obtaining Spotify token:', error);
         redirectPath = `/`;

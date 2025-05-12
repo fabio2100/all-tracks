@@ -2,16 +2,15 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import styles from "../page.module.css";
+import Cookies from "js-cookie";
 
 const TopTracks = () => {
-  const searchParams = useSearchParams();
   const [tracks, setTracks] = useState([]);
   const [estadisticas, setTotalEstadisticas] = useState({
     artists: {},
   });
-  const access_token = searchParams.get("access_token");
+  const access_token = Cookies.get('spotify_access_token');
   const isDevelopment = process.env.NEXT_PUBLIC_DEVELOPMENT === "1";
 
   useEffect(() => {
