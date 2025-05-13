@@ -20,20 +20,6 @@ export default function Artistas() {
     return cantidad;
   };
 
-  const CarouselAlternativo = ({ items }) => {
-    const [index, setIndex] = useState(0);
-
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setIndex((prevIndex) => (prevIndex + 1) % items.length);
-      }, 2000); // Cambia cada 2 segundos
-
-      return () => clearInterval(interval); // Limpiar intervalo al desmontar el componente
-    }, []);
-
-    return items[index];
-  };
-
   useEffect(() => {
     if (!access_token) return;
 
@@ -94,70 +80,93 @@ export default function Artistas() {
   }, [access_token]);
 
   const artistCardView = (artists, tipo) =>
-    artists.map((artista, index) => (
-      <div key={artista.id}>
-        <div className="card" style={{height: "200px"}}>
-          <div className="card-content">
-            <div className="media">
-              <div className="media-left">
-                <figure className="image is-48x48">
-                  <img
-                    style={{ borderRadius: "10px" }}
-                    src={artista.images[0]?.url}
-                    alt="Artist image"
-                  />
-                </figure>
-              </div>
-              <div className="media-content">
-                <p className="title is-4">{artista.name}</p>
-                <p className="subtitle is-size-6">
-                  <CarouselAlternativo
-                    items={[
-                      <span>
-                        Popularidad:{" "}
-                        <progress
-                          className="is-small"
-                          value={artista.popularity}
-                          max={100}
-                        />
-                      </span>,
-                      <span>
-                        seguidores:{" "}
-                        {seguidoresAUnidades(artista.followers.total)}
-                      </span>,
-                      <span>
-                        {artista.genres?.length > 0 &&
-                          `géneros: ${artista.genres
-                            ?.map((genre) => genre)
-                            .join(", ")}`}
-                      </span>,
-                    ]}
-                  />
-                </p>
-              </div>
-              <div className="media-rigth">
-                <p>{index + 1}</p>
-                <a href={artista.external_urls?.spotify}>Play</a>
+    artists
+      .map((artista, index) => {
+        const posicionOriginal =
+          originalArtistas.findIndex((a) => a.id === artista.id) + 1;
+        const posicionFollowers =
+          sortedByFollowers.findIndex((a) => a.id === artista.id) + 1;
+        const posicionPopularity =
+          sortedByPopularity.findIndex((a) => a.id === artista.id) + 1;
+
+        return (
+          <div key={artista.id}>
+            <div className="card">
+              <div className="card-content">
+                <div className="media">
+                  <div className="media-left">
+                    <figure className="image is-48x48">
+                      <img
+                        style={{ borderRadius: "10px" }}
+                        src={artista.images[0]?.url}
+                        alt="Artist image"
+                      />
+                    </figure>
+                  </div>
+                  <div className="media-content">
+                    <p className="title is-4">{artista.name}</p>
+                    <p className="subtitle is-size-6">
+                      Popularidad:{" "}
+                      <progress
+                        className="is-small"
+                        value={artista.popularity}
+                        max={100}
+                      />
+                      <br />
+                      seguidores: {seguidoresAUnidades(artista.followers.total)}
+                      <br />
+                      {artista.genres?.length > 0 &&
+                        `géneros: ${artista.genres
+                          ?.map((genre) => genre)
+                          .join(", ")}`}
+                      <br />
+                      {tipo === "sortedByPopularity" && (
+                        <span>
+                          Posición en seguidores: {posicionFollowers} <br />{" "}
+                          Posición en tu lista: {posicionOriginal}
+                        </span>
+                      )}
+                      {tipo === "sortedByFollowers" && (
+                        <span>
+                          Posición en popularidad: {posicionPopularity}
+                          <br />
+                          Posición en tu lista: {posicionOriginal}
+                        </span>
+                      )}
+                      {tipo === "originalArtistas" && (
+                        <span>
+                          Posición en popularidad: {posicionPopularity}
+                          <br />
+                          Posición en seguidores: {posicionFollowers}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <div className="media-rigth">
+                    <p>{index + 1}</p>
+                    <a href={artista.external_urls?.spotify}>Play</a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    )).slice(0,50);
+        );
+      })
+      .slice(0, 50);
   return (
     <div>
       <div className="columns">
         <div className="column">
           <h2>Tus artistas más escuchados</h2>
-          {artistCardView(originalArtistas, "original")}
+          {artistCardView(originalArtistas, "originalArtistas")}
         </div>
         <div className="column">
           <h2>Ordenados por seguidores</h2>
-          {artistCardView(sortedByFollowers, "followers")}
+          {artistCardView(sortedByFollowers, "sortedByFollowers")}
         </div>
         <div className="column">
           <h2>Ordenados por popularidad</h2>
-          {artistCardView(sortedByPopularity, "popularidad")}
+          {artistCardView(sortedByPopularity, "sortedByPopularity")}
         </div>
       </div>
       <h2>Géneros más escuchados</h2>
