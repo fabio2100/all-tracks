@@ -3,7 +3,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { ScatterChart } from "@mui/x-charts";
 
-
 export default function Artistas() {
   const access_token = Cookies.get("spotify_access_token");
   const [originalArtistas, setOriginalArtistas] = useState([]);
@@ -19,6 +18,20 @@ export default function Artistas() {
       return `${Math.floor(cantidad / 1000)} k`;
     }
     return cantidad;
+  };
+
+  const CarouselAlternativo = ({ items }) => {
+    const [index, setIndex] = useState(0);
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setIndex((prevIndex) => (prevIndex + 1) % items.length);
+      }, 2000); // Cambia cada 2 segundos
+
+      return () => clearInterval(interval); // Limpiar intervalo al desmontar el componente
+    }, []);
+
+    return items[index];
   };
 
   useEffect(() => {
@@ -80,75 +93,71 @@ export default function Artistas() {
     fetchAllArtists();
   }, [access_token]);
 
+  const artistCardView = (artists, tipo) =>
+    artists.map((artista, index) => (
+      <div key={artista.id}>
+        <div className="card" style={{height: "200px"}}>
+          <div className="card-content">
+            <div className="media">
+              <div className="media-left">
+                <figure className="image is-48x48">
+                  <img
+                    style={{ borderRadius: "10px" }}
+                    src={artista.images[0]?.url}
+                    alt="Artist image"
+                  />
+                </figure>
+              </div>
+              <div className="media-content">
+                <p className="title is-4">{artista.name}</p>
+                <p className="subtitle is-size-6">
+                  <CarouselAlternativo
+                    items={[
+                      <span>
+                        Popularidad:{" "}
+                        <progress
+                          className="is-small"
+                          value={artista.popularity}
+                          max={100}
+                        />
+                      </span>,
+                      <span>
+                        seguidores:{" "}
+                        {seguidoresAUnidades(artista.followers.total)}
+                      </span>,
+                      <span>
+                        {artista.genres?.length > 0 &&
+                          `géneros: ${artista.genres
+                            ?.map((genre) => genre)
+                            .join(", ")}`}
+                      </span>,
+                    ]}
+                  />
+                </p>
+              </div>
+              <div className="media-rigth">
+                <p>{index + 1}</p>
+                <a href={artista.external_urls?.spotify}>Play</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )).slice(0,50);
   return (
     <div>
-      <h1>Artistas</h1>
       <div className="columns">
         <div className="column">
           <h2>Tus artistas más escuchados</h2>
-          <div className="table">
-            {originalArtistas.map((artista, index) => (
-              /*<li key={artista.id}>{artista.name}</li>*/
-              <div key={artista.id}>
-                <div className="card">
-                  <div className="card-content">
-                    <div className="media">
-                      <div className="media-left">
-                        <figure className="image is-48x48">
-                          <img
-                            style={{ borderRadius: "10px" }}
-                            src={artista.images[0]?.url}
-                            alt="Artist image"
-                          />
-                        </figure>
-                      </div>
-                      <div className="media-content">
-                        <p className="title is-4">{artista.name}</p>
-                        <p className="subtitle is-size-6">
-                          popularidad:{" "}
-                          <progress
-                            className="is-small"
-                            value={artista.popularity}
-                            max={100}
-                          />{" "}
-                          <br />
-                          seguidores:{" "}
-                          {seguidoresAUnidades(artista.followers.total)} <br />
-                          géneros:{" "}
-                          {artista.genres?.map((genre) => genre).join(", ")}
-                        </p>
-                      </div>
-                      <div className="media-rigth">
-                        <p>{index + 1}</p>
-                        <a href={artista.external_urls?.spotify}>Play</a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          {artistCardView(originalArtistas, "original")}
         </div>
         <div className="column">
           <h2>Ordenados por seguidores</h2>
-          <ol>
-            {sortedByFollowers.map((artista) => (
-              <li key={artista.id}>
-                {artista.name} - {seguidoresAUnidades(artista.followers.total)}{" "}
-                seguidores
-              </li>
-            ))}
-          </ol>
+          {artistCardView(sortedByFollowers, "followers")}
         </div>
         <div className="column">
           <h2>Ordenados por popularidad</h2>
-          <ol>
-            {sortedByPopularity.map((artista) => (
-              <li key={artista.id}>
-                {artista.name} - Popularidad: {artista.popularity}
-              </li>
-            ))}
-          </ol>
+          {artistCardView(sortedByPopularity, "popularidad")}
         </div>
       </div>
       <h2>Géneros más escuchados</h2>
@@ -162,7 +171,16 @@ export default function Artistas() {
 
       <ScatterChart
         height={300}
-        series={[{label: 'Dispersión seguidores popularidad',data: originalArtistas.map((artist)=>({y:artist.popularity,x:artist.followers.total,id:artist.id}))}]}
+        series={[
+          {
+            label: "Dispersión seguidores popularidad",
+            data: originalArtistas.map((artist) => ({
+              y: artist.popularity,
+              x: artist.followers.total,
+              id: artist.id,
+            })),
+          },
+        ]}
       />
     </div>
   );

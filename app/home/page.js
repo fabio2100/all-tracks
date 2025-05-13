@@ -9,7 +9,7 @@ import TopTracks from "../components/TopTracks";
 
 export default function Home() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("canciones");
+  const [activeTab, setActiveTab] = useState("artistas");
 
   useEffect(() => {
     const checkTokens = async () => {

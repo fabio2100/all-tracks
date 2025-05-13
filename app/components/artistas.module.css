@@ -1,0 +1,8 @@
+.carouselContainer {
+  overflow: hidden;
+  width: 200px; /* Ajusta el ancho según necesites */
+}
+
+.carouselItem {
+  transition: transform 0.5s ease-in-out;
+}
