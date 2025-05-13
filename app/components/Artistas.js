@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { ScatterChart } from "@mui/x-charts";
+import { createTheme, ThemeProvider } from "@mui/material";
+
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
 
 export default function Artistas() {
   const access_token = Cookies.get("spotify_access_token");
@@ -177,20 +184,26 @@ export default function Artistas() {
           </li>
         ))}
       </ol>
-
-      <ScatterChart
-        height={300}
-        series={[
-          {
-            label: "Dispersión seguidores popularidad",
-            data: originalArtistas.map((artist) => ({
-              y: artist.popularity,
-              x: artist.followers.total,
-              id: artist.id,
-            })),
-          },
-        ]}
-      />
+      <ThemeProvider theme={darkTheme}>
+        <ScatterChart
+          height={300}
+          xAxis={[{ scaleType: "log" }]}
+          series={[
+            {
+              data: originalArtistas.map((artist) => ({
+                y: artist.popularity,
+                x: artist.followers.total,
+                id: artist.id,
+                name: artist.name,
+              })),
+              valueFormatter: (point) =>
+                `${point.name}: (${seguidoresAUnidades(point.x)} Fol, ${
+                  point.y
+                } Pop)`,
+            },
+          ]}
+        />
+      </ThemeProvider>
     </div>
   );
 }
