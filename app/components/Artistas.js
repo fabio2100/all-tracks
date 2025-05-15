@@ -3,6 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { ScatterChart } from "@mui/x-charts";
 import { createTheme, ThemeProvider } from "@mui/material";
+import styles from "../page.module.css";
 
 const darkTheme = createTheme({
   palette: {
@@ -113,42 +114,56 @@ export default function Artistas() {
                   </div>
                   <div className="media-content">
                     <p className="title is-4">{artista.name}</p>
-                    <p className="subtitle is-size-6">
-                      Popularidad:{" "}
-                      <progress
-                        className="is-small"
-                        value={artista.popularity}
-                        max={100}
-                      />
-                      <br />
-                      seguidores: {seguidoresAUnidades(artista.followers.total)}
-                      <br />
-                      {artista.genres?.length > 0 &&
-                        `géneros: ${artista.genres
-                          ?.map((genre) => genre)
-                          .join(", ")}`}
-                      <br />
-                      {tipo === "sortedByPopularity" && (
-                        <span>
-                          Posición en seguidores: {posicionFollowers} <br />{" "}
-                          Posición en tu lista: {posicionOriginal}
-                        </span>
-                      )}
-                      {tipo === "sortedByFollowers" && (
-                        <span>
-                          Posición en popularidad: {posicionPopularity}
-                          <br />
-                          Posición en tu lista: {posicionOriginal}
-                        </span>
-                      )}
-                      {tipo === "originalArtistas" && (
-                        <span>
-                          Posición en popularidad: {posicionPopularity}
-                          <br />
-                          Posición en seguidores: {posicionFollowers}
-                        </span>
-                      )}
-                    </p>
+
+                    {process.env.NEXT_PUBLIC_CAROUSEL_CONTAINER ? (
+                      <p className="subtitle is-size-6">
+                        <InfoRotativa
+                          artista={artista}
+                          tipo={tipo}
+                          posicionFollowers={posicionFollowers}
+                          posicionPopularity={posicionPopularity}
+                          posicionOriginal={posicionOriginal}
+                        />
+                      </p>
+                    ) : (
+                      <p className="subtitle is-size-6">
+                        Popularidad:{" "}
+                        <progress
+                          className="is-small"
+                          value={artista.popularity}
+                          max={100}
+                        />
+                        <br />
+                        seguidores:{" "}
+                        {seguidoresAUnidades(artista.followers.total)}
+                        <br />
+                        {artista.genres?.length > 0 &&
+                          `géneros: ${artista.genres
+                            ?.map((genre) => genre)
+                            .join(", ")}`}
+                        <br />
+                        {tipo === "sortedByPopularity" && (
+                          <span>
+                            Posición en seguidores: {posicionFollowers} <br />{" "}
+                            Posición en tu lista: {posicionOriginal}
+                          </span>
+                        )}
+                        {tipo === "sortedByFollowers" && (
+                          <span>
+                            Posición en popularidad: {posicionPopularity}
+                            <br />
+                            Posición en tu lista: {posicionOriginal}
+                          </span>
+                        )}
+                        {tipo === "originalArtistas" && (
+                          <span>
+                            Posición en popularidad: {posicionPopularity}
+                            <br />
+                            Posición en seguidores: {posicionFollowers}
+                          </span>
+                        )}
+                      </p>
+                    )}
                   </div>
                   <div className="media-rigth">
                     <p>{index + 1}</p>
@@ -161,6 +176,68 @@ export default function Artistas() {
         );
       })
       .slice(0, 50);
+
+  const InfoRotativa = ({
+    artista,
+    tipo,
+    posicionFollowers,
+    posicionPopularity,
+    posicionOriginal,
+  }) => {
+    const elementos = [
+      <>
+        Popularidad:{" "}
+        <progress className="is-small" value={artista.popularity} max={100} />
+      </>,
+      <>Seguidores: {seguidoresAUnidades(artista.followers.total)}</>,
+      <>Géneros: {artista.genres?.length > 0 && artista.genres.join(", ")}</>,
+      ...(tipo === "sortedByPopularity"
+        ? [
+            <>Posición en seguidores: {posicionFollowers}</>,
+            <>Posición en tu lista: {posicionOriginal}</>,
+          ]
+        : []),
+      ...(tipo === "sortedByFollowers"
+        ? [
+            <>Posición en popularidad: {posicionPopularity}</>,
+            <>Posición en tu lista: {posicionOriginal}</>,
+          ]
+        : []),
+      ...(tipo === "originalArtistas"
+        ? [
+            <>Posición en popularidad: {posicionPopularity}</>,
+            <>Posición en seguidores: {posicionFollowers}</>,
+          ]
+        : []),
+    ];
+
+    const [index, setIndex] = useState(0);
+    const [fade, setFade] = useState(false);
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setFade(true); // Activar la animación de salida
+
+        setTimeout(() => {
+          setIndex((prevIndex) => (prevIndex + 1) % elementos.length);
+          setFade(false); // Activar la animación de entrada
+        }, 500); // Tiempo de la animación de salida
+      }, 2000);
+
+      return () => clearInterval(interval);
+    }, [elementos.length]);
+
+    return (
+      <div
+        className={`${styles.fadeContainer} ${
+          fade ? styles.fadeOut : styles.fadeIn
+        }`}
+      >
+        {elementos[index]}
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className="columns">

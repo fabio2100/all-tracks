@@ -8,3 +8,4 @@
 * posicion en otras tablas
 * Mostrar alguna imagen en canciones
 * Buscador
+* Seguir sistema de tablas de audiohabits
