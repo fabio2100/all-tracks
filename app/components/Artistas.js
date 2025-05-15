@@ -222,7 +222,7 @@ export default function Artistas() {
           setIndex((prevIndex) => (prevIndex + 1) % elementos.length);
           setFade(false); // Activar la animación de entrada
         }, 500); // Tiempo de la animación de salida
-      }, 2000);
+      }, process.env.NEXT_PUBLIC_TIEMPO_TRANSICION_CAROUSEL || 5000);
 
       return () => clearInterval(interval);
     }, [elementos.length]);
