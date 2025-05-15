@@ -52,16 +52,17 @@ export default function Artistas() {
           } else {
             hasMore = false;
           }
+          setOriginalArtistas(allArtists);
+          setSortedByFollowers(
+            [...allArtists].sort(
+              (a, b) => b.followers.total - a.followers.total
+            )
+          );
+          setSortedByPopularity(
+            [...allArtists].sort((a, b) => b.popularity - a.popularity)
+          );
+          processGenres(allArtists);
         }
-
-        setOriginalArtistas(allArtists); // Guardamos la lista original en el estado
-        setSortedByFollowers(
-          [...allArtists].sort((a, b) => b.followers.total - a.followers.total)
-        );
-        setSortedByPopularity(
-          [...allArtists].sort((a, b) => b.popularity - a.popularity)
-        );
-        processGenres(allArtists);
       } catch (error) {
         console.error("Error en la petición:", error);
       }

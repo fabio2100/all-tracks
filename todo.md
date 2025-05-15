@@ -7,3 +7,4 @@
 * carousel en elementos de artistas 
 * posicion en otras tablas
 * Mostrar alguna imagen en canciones
+* Buscador
