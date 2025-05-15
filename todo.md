@@ -1,4 +1,3 @@
-* Fixed columns in tables 
 * Loading elements
 * loading bar behind menues
 * redirecciones con tokens erroneos

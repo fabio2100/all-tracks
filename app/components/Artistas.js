@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { ScatterChart } from "@mui/x-charts";
-import { createTheme, ThemeProvider } from "@mui/material";
+import { CircularProgress, createTheme, ThemeProvider } from "@mui/material";
 import styles from "../page.module.css";
 
 const darkTheme = createTheme({
@@ -17,6 +17,7 @@ export default function Artistas() {
   const [sortedByFollowers, setSortedByFollowers] = useState([]);
   const [sortedByPopularity, setSortedByPopularity] = useState([]);
   const [genres, setGenres] = useState([]);
+  const [loadingFirstArtists,setLoadingFirstArtists] = useState(true) 
 
   const seguidoresAUnidades = (cantidad) => {
     if (Math.floor(cantidad) / 1000000 > 1) {
@@ -46,7 +47,7 @@ export default function Artistas() {
               headers: { Authorization: `Bearer ${access_token}` },
             }
           );
-
+          setLoadingFirstArtists(false)
           if (response.data.items.length > 0) {
             allArtists = [...allArtists, ...response.data.items];
             offset += limit;
@@ -239,6 +240,7 @@ export default function Artistas() {
   };
 
   return (
+    loadingFirstArtists ? <CircularProgress color="success" /> :
     <div>
       <div className="columns">
         <div className="column">

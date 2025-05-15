@@ -4,14 +4,16 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import styles from "../page.module.css";
 import Cookies from "js-cookie";
+import { CircularProgress } from "@mui/material";
 
 const TopTracks = () => {
   const [tracks, setTracks] = useState([]);
   const [estadisticas, setTotalEstadisticas] = useState({
     artists: {},
   });
-  const access_token = Cookies.get('spotify_access_token');
+  const access_token = Cookies.get("spotify_access_token");
   const isDevelopment = process.env.NEXT_PUBLIC_DEVELOPMENT === "1";
+  const [loadingFirstSongs, setLoadingFirstSongs] = useState(true);
 
   useEffect(() => {
     const fetchTopTracks = async (offset = 0) => {
@@ -31,6 +33,7 @@ const TopTracks = () => {
             },
           }
         );
+        setLoadingFirstSongs(false);
 
         // Actualiza el total de pistas si no está configurado
 
@@ -135,7 +138,6 @@ const TopTracks = () => {
     }
   }, [tracks]);
 
-
   function convertMsToMinutesSeconds(ms) {
     const minutes = Math.floor(ms / 60000);
     const seconds = Math.floor((ms % 60000) / 1000);
@@ -143,6 +145,7 @@ const TopTracks = () => {
   }
 
   return (
+    loadingFirstSongs ? <CircularProgress color="success" /> :
     <div className={styles.main}>
       <h2 style={{ marginTop: ".5em", marginBottom: "0.25em" }}>
         Estadísticas
@@ -157,74 +160,79 @@ const TopTracks = () => {
           max={100}
         />
       )}
-<div className="columns">
-  <div className="column">
-      <table className="table">
-        <tbody>
-          <tr>
-            <td>Total de pistas</td>
-            <td>{estadisticas.totalTracks}</td>
-          </tr>
-          {estadisticas.totalTracks !== estadisticas.totalPistasChecked && (
-            <tr>
-              <td>Total de pistas analizadas</td>
-              <td>{estadisticas.totalPistasChecked}</td>
-            </tr>
-          )}
 
-          <tr>
-            <td>Total de artistas</td>
-            <td>{estadisticas.totalArtists}</td>
-          </tr>
-          </tbody>
-          </table>
-          </div>
-          <div className="column">
+      <div className="columns">
+        <div className="column">
           <table className="table">
             <tbody>
-          <tr>
-            <td>Canción más larga</td>
-            <td>
-              <p>
-                {estadisticas.longestTrack?.name} By{" "}
-                {estadisticas.longestTrack?.artists.map(
-                  (artist) => artist.name
-                )}
-              </p>
-              <p>{convertMsToMinutesSeconds(estadisticas?.tiempoMasLarga)}</p>
-            </td>
-          </tr>
-          <tr>
-            <td>Canción más corta</td>
-            <td>
-              <p>
-                {estadisticas.shortestTrack?.name} By{" "}
-                {estadisticas.shortestTrack?.artists.map(
-                  (artist) => artist.name
-                )}
-              </p>
-              <p>{convertMsToMinutesSeconds(estadisticas?.tiempoMasCorta)}</p>
-            </td>
-          </tr>
-          <tr>
-            <td>Canción con más artistas</td>
-            <td>
-              <p>
-                {estadisticas.tracksWithMostArtists
-                  ?.map((track) => track.name)
-                  .join(", ")}
-              </p>
-              <p>Número de artistas: {estadisticas?.maxArtistsCount}</p>
-              <small>
-                {estadisticas.tracksWithMostArtists?.map((track) =>
-                  track?.artists?.map((artist) => artist.name).join(", ")
-                )}
-              </small>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      </div>
+              <tr>
+                <td>Total de pistas</td>
+                <td>{estadisticas.totalTracks}</td>
+              </tr>
+              {estadisticas.totalTracks !== estadisticas.totalPistasChecked && (
+                <tr>
+                  <td>Total de pistas analizadas</td>
+                  <td>{estadisticas.totalPistasChecked}</td>
+                </tr>
+              )}
+
+              <tr>
+                <td>Total de artistas</td>
+                <td>{estadisticas.totalArtists}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="column">
+          <table className="table">
+            <tbody>
+              <tr>
+                <td>Canción más larga</td>
+                <td>
+                  <p>
+                    {estadisticas.longestTrack?.name} By{" "}
+                    {estadisticas.longestTrack?.artists.map(
+                      (artist) => artist.name
+                    )}
+                  </p>
+                  <p>
+                    {convertMsToMinutesSeconds(estadisticas?.tiempoMasLarga)}
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td>Canción más corta</td>
+                <td>
+                  <p>
+                    {estadisticas.shortestTrack?.name} By{" "}
+                    {estadisticas.shortestTrack?.artists.map(
+                      (artist) => artist.name
+                    )}
+                  </p>
+                  <p>
+                    {convertMsToMinutesSeconds(estadisticas?.tiempoMasCorta)}
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td>Canción con más artistas</td>
+                <td>
+                  <p>
+                    {estadisticas.tracksWithMostArtists
+                      ?.map((track) => track.name)
+                      .join(", ")}
+                  </p>
+                  <p>Número de artistas: {estadisticas?.maxArtistsCount}</p>
+                  <small>
+                    {estadisticas.tracksWithMostArtists?.map((track) =>
+                      track?.artists?.map((artist) => artist.name).join(", ")
+                    )}
+                  </small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <div className="columns">
         <div className="column">
@@ -287,26 +295,32 @@ const TopTracks = () => {
               ))}
             </tbody>
           </table>
-          
         </div>
         <div className="column">
-            <h1>Tus pistas más escuchadas</h1>
-              <table className="table is-fullwidth">
-                <thead>
-                  <tr>
-                    <th>Nª</th>
-                    <th>Canción</th>
+          <h1>Tus pistas más escuchadas</h1>
+          <table className="table is-fullwidth">
+            <thead>
+              <tr>
+                <th>Nª</th>
+                <th>Canción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tracks
+                .map((track, index) => (
+                  <tr key={`table2${track.id}`}>
+                    <td>{index + 1}</td>
+                    <td>
+                      {track.name} By{" "}
+                      {track.artists.map((artist) => artist.name).join(", ")}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {
-                    tracks.map((track,index)=>(<tr key={`table2${track.id}`}><td>{index+1}</td><td>{track.name} By {track.artists.map(artist=>artist.name).join(', ')}</td></tr>)).slice(0,100)
-                  }
-                </tbody>
-              </table>
-          </div>
+                ))
+                .slice(0, 100)}
+            </tbody>
+          </table>
+        </div>
       </div>
-      
     </div>
   );
 };
