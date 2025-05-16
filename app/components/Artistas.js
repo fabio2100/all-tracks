@@ -5,6 +5,8 @@ import { ScatterChart } from "@mui/x-charts";
 import { CircularProgress, createTheme, ThemeProvider } from "@mui/material";
 import styles from "../page.module.css";
 import { FaPlay } from "react-icons/fa";
+import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import { MdExpandMore } from "react-icons/md";
 
 const darkTheme = createTheme({
   palette: {
@@ -73,21 +75,28 @@ export default function Artistas() {
     };
 
     const processGenres = (artists) => {
-      const genreCount = {};
+      const genreData = {};
 
       artists.forEach((artist) => {
         artist.genres.forEach((genre) => {
-          genreCount[genre] = (genreCount[genre] || 0) + 1;
+          if (!genreData[genre]) {
+            genreData[genre] = { count: 0, artists: [] };
+          }
+          genreData[genre].count += 1;
+          genreData[genre].artists.push(artist.name);
         });
       });
 
-      const sortedGenres = Object.entries(genreCount)
-        .sort((a, b) => b[1] - a[1])
-        .map(([genre, count]) => ({ genre, count }));
+      const sortedGenres = Object.entries(genreData)
+        .sort((a, b) => b[1].count - a[1].count)
+        .map(([genre, data]) => ({
+          genre,
+          count: data.count,
+          artists: data.artists,
+        }));
 
       setGenres(sortedGenres);
     };
-
     fetchAllArtists();
   }, [access_token]);
 
@@ -197,12 +206,7 @@ export default function Artistas() {
   }) => {
     const elementos = [
       <>
-        Popularidad:{" "}
-        <progress
-          className={styles.progressBar}
-          value={artista.popularity}
-          max={100}
-        />
+        Popularidad: <progress value={artista.popularity} max={100} />
       </>,
       <>Seguidores: {seguidoresAUnidades(artista.followers.total)}</>,
       <>Géneros: {artista.genres?.length > 0 && artista.genres.join(", ")}</>,
@@ -263,6 +267,27 @@ export default function Artistas() {
     );
   };
 
+  const GenreAccordion = ({ genres }) => {
+    return (
+      <ThemeProvider theme={darkTheme}>
+        <div>
+          {genres.map(({ genre, count, artists }) => (
+            <Accordion key={genre}>
+              <AccordionSummary expandIcon={<MdExpandMore />}>
+                <p>
+                  <strong>{genre}</strong> ({count})
+                </p>
+              </AccordionSummary>
+              <AccordionDetails>
+                <small>{artists.map((artist) => artist).join(", ")}</small>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </div>
+      </ThemeProvider>
+    );
+  };
+
   return loadingFirstArtists ? (
     <CircularProgress color="success" />
   ) : (
@@ -291,13 +316,8 @@ export default function Artistas() {
         </div>
       </div>
       <h2>Géneros más escuchados</h2>
-      <ol>
-        {genres.map(({ genre, count }) => (
-          <li key={genre}>
-            {genre}: {count} veces
-          </li>
-        ))}
-      </ol>
+
+      <GenreAccordion genres={genres} />
       <ThemeProvider theme={darkTheme}>
         <ScatterChart
           height={300}
