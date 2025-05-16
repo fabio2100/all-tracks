@@ -318,10 +318,13 @@ export default function Artistas() {
       <h2>Géneros más escuchados</h2>
 
       <GenreAccordion genres={genres} />
+
+      <h2>Gráfico Seguidores - Popularidad</h2>
       <ThemeProvider theme={darkTheme}>
         <ScatterChart
           height={300}
-          xAxis={[{ scaleType: "log" }]}
+          xAxis={[{ scaleType: "log" , label:"Followers"}]}
+          yAxis={[{label:"Popularity"}]}
           series={[
             {
               data: originalArtistas.map((artist) => ({
