@@ -142,7 +142,7 @@ export default function Artistas() {
                     <p className="title is-4">{artista.name}</p>
 
                     {process.env.NEXT_PUBLIC_CAROUSEL_CONTAINER === "1" ? (
-                      <p className="subtitle is-size-6">
+                      <div className="subtitle is-size-6">
                         <InfoRotativa
                           artista={artista}
                           tipo={tipo}
@@ -150,15 +150,11 @@ export default function Artistas() {
                           posicionPopularity={posicionPopularity}
                           posicionOriginal={posicionOriginal}
                         />
-                      </p>
+                      </div>
                     ) : (
                       <p className="subtitle is-size-6">
                         Popularidad:{" "}
-                        <progress
-                          className="is-small"
-                          value={artista.popularity}
-                          max={100}
-                        />
+                        {artista.popularity}
                         <br />
                         seguidores:{" "}
                         {seguidoresAUnidades(artista.followers.total)}
@@ -220,7 +216,7 @@ export default function Artistas() {
   }) => {
     const elementos = [
       <>
-        Popularidad: <progress value={artista.popularity} max={100} />
+        Popularidad: {artista.popularity}
       </>,
       <>Seguidores: {seguidoresAUnidades(artista.followers.total)}</>,
       <>Géneros: {artista.genres?.length > 0 && artista.genres.join(", ")}</>,

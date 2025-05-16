@@ -144,8 +144,9 @@ const TopTracks = () => {
     return `${minutes}m${seconds}s`;
   }
 
-  return (
-    loadingFirstSongs ? <CircularProgress color="success" /> :
+  return loadingFirstSongs ? (
+    <CircularProgress color="success" />
+  ) : (
     <div className={styles.main}>
       <h2 style={{ marginTop: ".5em", marginBottom: "0.25em" }}>
         Estadísticas
