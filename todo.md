@@ -5,7 +5,5 @@
 * Mostrar alguna imagen en canciones
 * Buscador en canciones
 * Seguir sistema de tablas de audiohabits
-* Btn play
 * Style position
-* display artistas en ranking de géneros más escuchados
 * title style

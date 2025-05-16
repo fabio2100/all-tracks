@@ -22,7 +22,7 @@ export default function Artistas() {
     sortedByPopularity: [],
     genres: [],
     totalArtists: 0,
-    totalArtistsChecked: 0
+    totalArtistsChecked: 0,
   });
   const [loadingFirstArtists, setLoadingFirstArtists] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -76,7 +76,7 @@ export default function Artistas() {
             sortedByPopularity: listPopularity,
             genres: processGenres(allArtists),
             totalArtists: response.data.total,
-            totalArtistsChecked: listOriginal.length
+            totalArtistsChecked: listOriginal.length,
           });
         }
       } catch (error) {
@@ -310,7 +310,8 @@ export default function Artistas() {
         <progress
           className="progress is-success is-small"
           value={
-            (estadisticas?.totalArtistsChecked * 100) / estadisticas?.totalArtists
+            (estadisticas?.totalArtistsChecked * 100) /
+            estadisticas?.totalArtists
           }
           max={100}
         />
@@ -323,6 +324,26 @@ export default function Artistas() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+      </div>
+      <div className="mb-5">
+        <table className="table">
+          <tbody>
+            <tr>
+              <td>Total de artistas</td>
+              <td>{estadisticas.totalArtists}</td>
+            </tr>
+            {estadisticas.totalArtists !== estadisticas.totalArtistsChecked && (
+              <tr>
+                <td>Total de artistas analizados</td>
+                <td>{estadisticas.totalArtistsChecked}</td>
+              </tr>
+            )}
+            <tr>
+              <td>Total de géneros escuchados</td>
+              <td>{estadisticas.genres.length}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div className="columns">
         <div className="column">
