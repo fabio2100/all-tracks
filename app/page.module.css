@@ -259,3 +259,8 @@ a.secondary {
   opacity: 0;
   transform: translateY(-10px);
 }
+
+
+.progressBar{
+  background-color: #09a201;
+}

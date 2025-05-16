@@ -198,7 +198,11 @@ export default function Artistas() {
     const elementos = [
       <>
         Popularidad:{" "}
-        <progress className="is-small" value={artista.popularity} max={100} />
+        <progress
+          className={styles.progressBar}
+          value={artista.popularity}
+          max={100}
+        />
       </>,
       <>Seguidores: {seguidoresAUnidades(artista.followers.total)}</>,
       <>Géneros: {artista.genres?.length > 0 && artista.genres.join(", ")}</>,
