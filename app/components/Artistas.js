@@ -17,7 +17,8 @@ export default function Artistas() {
   const [sortedByFollowers, setSortedByFollowers] = useState([]);
   const [sortedByPopularity, setSortedByPopularity] = useState([]);
   const [genres, setGenres] = useState([]);
-  const [loadingFirstArtists,setLoadingFirstArtists] = useState(true) 
+  const [loadingFirstArtists, setLoadingFirstArtists] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const seguidoresAUnidades = (cantidad) => {
     if (Math.floor(cantidad) / 1000000 > 1) {
@@ -47,7 +48,7 @@ export default function Artistas() {
               headers: { Authorization: `Bearer ${access_token}` },
             }
           );
-          setLoadingFirstArtists(false)
+          setLoadingFirstArtists(false);
           if (response.data.items.length > 0) {
             allArtists = [...allArtists, ...response.data.items];
             offset += limit;
@@ -90,7 +91,7 @@ export default function Artistas() {
   }, [access_token]);
 
   const artistCardView = (artists, tipo) =>
-    artists
+    filterArtists(artists,searchTerm)
       .map((artista, index) => {
         const posicionOriginal =
           originalArtistas.findIndex((a) => a.id === artista.id) + 1;
@@ -116,7 +117,7 @@ export default function Artistas() {
                   <div className="media-content">
                     <p className="title is-4">{artista.name}</p>
 
-                    {process.env.NEXT_PUBLIC_CAROUSEL_CONTAINER ? (
+                    {process.env.NEXT_PUBLIC_CAROUSEL_CONTAINER==="1" ? (
                       <p className="subtitle is-size-6">
                         <InfoRotativa
                           artista={artista}
@@ -167,7 +168,11 @@ export default function Artistas() {
                     )}
                   </div>
                   <div className="media-rigth">
-                    <p>{index + 1}</p>
+                    <p>
+                      {tipo === "originalArtistas" && posicionOriginal}
+                      {tipo === "sortedByFollowers" && posicionFollowers}
+                      {tipo === "sortedByPopularity" && posicionPopularity}
+                    </p>
                     <a href={artista.external_urls?.spotify}>Play</a>
                   </div>
                 </div>
@@ -239,9 +244,31 @@ export default function Artistas() {
     );
   };
 
-  return (
-    loadingFirstArtists ? <CircularProgress color="success" /> :
+  const filterArtists = (artists, searchTerm) => {
+  return artists.filter((artista) =>
+    artista.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    artista.genres.some((genre) =>
+      genre.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
+};
+
+
+
+
+  return loadingFirstArtists ? (
+    <CircularProgress color="success" />
+  ) : (
     <div>
+      <div className="control mb-5">
+        <input
+          className="input is-focused is-success"
+          type="text"
+          placeholder="Buscar nombre o género..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
       <div className="columns">
         <div className="column">
           <h2>Tus artistas más escuchados</h2>
