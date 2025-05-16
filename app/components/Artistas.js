@@ -16,10 +16,14 @@ const darkTheme = createTheme({
 
 export default function Artistas() {
   const access_token = Cookies.get("spotify_access_token");
-  const [originalArtistas, setOriginalArtistas] = useState([]);
-  const [sortedByFollowers, setSortedByFollowers] = useState([]);
-  const [sortedByPopularity, setSortedByPopularity] = useState([]);
-  const [genres, setGenres] = useState([]);
+  const [estadisticas, setEstadisticas] = useState({
+    originalArtistas: [],
+    sortedByFollowers: [],
+    sortedByPopularity: [],
+    genres: [],
+    totalArtists: 0,
+    totalArtistsChecked: 0
+  });
   const [loadingFirstArtists, setLoadingFirstArtists] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -58,16 +62,22 @@ export default function Artistas() {
           } else {
             hasMore = false;
           }
-          setOriginalArtistas(allArtists);
-          setSortedByFollowers(
-            [...allArtists].sort(
-              (a, b) => b.followers.total - a.followers.total
-            )
+          const listOriginal = allArtists;
+          const listFollowers = [...allArtists].sort(
+            (a, b) => b.followers.total - a.followers.total
           );
-          setSortedByPopularity(
-            [...allArtists].sort((a, b) => b.popularity - a.popularity)
+          const listPopularity = [...allArtists].sort(
+            (a, b) => b.popularity - a.popularity
           );
-          processGenres(allArtists);
+          setEstadisticas({
+            ...estadisticas,
+            originalArtistas: listOriginal,
+            sortedByFollowers: listFollowers,
+            sortedByPopularity: listPopularity,
+            genres: processGenres(allArtists),
+            totalArtists: response.data.total,
+            totalArtistsChecked: listOriginal.length
+          });
         }
       } catch (error) {
         console.error("Error en la petición:", error);
@@ -95,7 +105,7 @@ export default function Artistas() {
           artists: data.artists,
         }));
 
-      setGenres(sortedGenres);
+      return sortedGenres;
     };
     fetchAllArtists();
   }, [access_token]);
@@ -104,11 +114,15 @@ export default function Artistas() {
     filterArtists(artists, searchTerm)
       .map((artista, index) => {
         const posicionOriginal =
-          originalArtistas.findIndex((a) => a.id === artista.id) + 1;
+          estadisticas.originalArtistas.findIndex((a) => a.id === artista.id) +
+          1;
         const posicionFollowers =
-          sortedByFollowers.findIndex((a) => a.id === artista.id) + 1;
+          estadisticas.sortedByFollowers.findIndex((a) => a.id === artista.id) +
+          1;
         const posicionPopularity =
-          sortedByPopularity.findIndex((a) => a.id === artista.id) + 1;
+          estadisticas.sortedByPopularity.findIndex(
+            (a) => a.id === artista.id
+          ) + 1;
 
         return (
           <div key={artista.id}>
@@ -292,6 +306,15 @@ export default function Artistas() {
     <CircularProgress color="success" />
   ) : (
     <div>
+      {estadisticas.totalArtistsChecked !== estadisticas.totalArtists && (
+        <progress
+          className="progress is-success is-small"
+          value={
+            (estadisticas?.totalArtistsChecked * 100) / estadisticas?.totalArtists
+          }
+          max={100}
+        />
+      )}
       <div className="control mb-5">
         <input
           className="input is-focused is-success"
@@ -304,30 +327,33 @@ export default function Artistas() {
       <div className="columns">
         <div className="column">
           <h2>Tus artistas más escuchados</h2>
-          {artistCardView(originalArtistas, "originalArtistas")}
+          {artistCardView(estadisticas.originalArtistas, "originalArtistas")}
         </div>
         <div className="column">
           <h2>Ordenados por seguidores</h2>
-          {artistCardView(sortedByFollowers, "sortedByFollowers")}
+          {artistCardView(estadisticas.sortedByFollowers, "sortedByFollowers")}
         </div>
         <div className="column">
           <h2>Ordenados por popularidad</h2>
-          {artistCardView(sortedByPopularity, "sortedByPopularity")}
+          {artistCardView(
+            estadisticas.sortedByPopularity,
+            "sortedByPopularity"
+          )}
         </div>
       </div>
       <h2>Géneros más escuchados</h2>
 
-      <GenreAccordion genres={genres} />
+      <GenreAccordion genres={estadisticas.genres} />
 
       <h2>Gráfico Seguidores - Popularidad</h2>
       <ThemeProvider theme={darkTheme}>
         <ScatterChart
           height={300}
-          xAxis={[{ scaleType: "log" , label:"Followers"}]}
-          yAxis={[{label:"Popularity"}]}
+          xAxis={[{ scaleType: "log", label: "Followers" }]}
+          yAxis={[{ label: "Popularity" }]}
           series={[
             {
-              data: originalArtistas.map((artist) => ({
+              data: estadisticas.originalArtistas.map((artist) => ({
                 y: artist.popularity,
                 x: artist.followers.total,
                 id: artist.id,
