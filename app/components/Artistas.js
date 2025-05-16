@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import { ScatterChart } from "@mui/x-charts";
 import { CircularProgress, createTheme, ThemeProvider } from "@mui/material";
 import styles from "../page.module.css";
+import { FaPlay } from "react-icons/fa";
 
 const darkTheme = createTheme({
   palette: {
@@ -91,7 +92,7 @@ export default function Artistas() {
   }, [access_token]);
 
   const artistCardView = (artists, tipo) =>
-    filterArtists(artists,searchTerm)
+    filterArtists(artists, searchTerm)
       .map((artista, index) => {
         const posicionOriginal =
           originalArtistas.findIndex((a) => a.id === artista.id) + 1;
@@ -117,7 +118,7 @@ export default function Artistas() {
                   <div className="media-content">
                     <p className="title is-4">{artista.name}</p>
 
-                    {process.env.NEXT_PUBLIC_CAROUSEL_CONTAINER==="1" ? (
+                    {process.env.NEXT_PUBLIC_CAROUSEL_CONTAINER === "1" ? (
                       <p className="subtitle is-size-6">
                         <InfoRotativa
                           artista={artista}
@@ -169,11 +170,15 @@ export default function Artistas() {
                   </div>
                   <div className="media-rigth">
                     <p>
-                      {tipo === "originalArtistas" && posicionOriginal}
-                      {tipo === "sortedByFollowers" && posicionFollowers}
-                      {tipo === "sortedByPopularity" && posicionPopularity}
+                      <strong className="has-text-success">
+                        {tipo === "originalArtistas" && posicionOriginal}
+                        {tipo === "sortedByFollowers" && posicionFollowers}
+                        {tipo === "sortedByPopularity" && posicionPopularity}
+                      </strong>
                     </p>
-                    <a href={artista.external_urls?.spotify}>Play</a>
+                    <a href={artista.external_urls?.spotify} target="_blank">
+                      <FaPlay className="has-text-success" />
+                    </a>
                   </div>
                 </div>
               </div>
@@ -245,16 +250,14 @@ export default function Artistas() {
   };
 
   const filterArtists = (artists, searchTerm) => {
-  return artists.filter((artista) =>
-    artista.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    artista.genres.some((genre) =>
-      genre.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
-};
-
-
-
+    return artists.filter(
+      (artista) =>
+        artista.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        artista.genres.some((genre) =>
+          genre.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+    );
+  };
 
   return loadingFirstArtists ? (
     <CircularProgress color="success" />

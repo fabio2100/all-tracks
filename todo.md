@@ -8,3 +8,4 @@
 * Btn play
 * Style position
 * display artistas en ranking de géneros más escuchados
+* title style
