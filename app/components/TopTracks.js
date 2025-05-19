@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import styles from "../page.module.css";
 import Cookies from "js-cookie";
 import { CircularProgress } from "@mui/material";
+import { FaPlay } from "react-icons/fa";
 
 const TopTracks = () => {
   const [tracks, setTracks] = useState([]);
@@ -67,10 +68,10 @@ const TopTracks = () => {
     if (tracks.length > 0) {
       const trackCountByArtist = tracks.reduce((acc, track) => {
         track.artists.forEach((artist) => {
-          if (!acc[artist.name]) {
-            acc[artist.name] = 0;
-          }
-          acc[artist.name]++;
+          if (!acc[artist.id]) {
+            acc[artist.id] = { id: artist.id, name: artist.name, count: 0 };
+        }
+          acc[artist.id].count++;
         });
         return acc;
       }, {});
@@ -107,15 +108,13 @@ const TopTracks = () => {
       );
 
       const sortedArtists = Object.entries(trackCountByArtist)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 100);
-
+        .sort((a, b) => b.count - a.count)
       let sortedByPopularity = [];
       sortedByPopularity = [...tracks];
       sortedByPopularity.sort((a, b) => b.popularity - a.popularity);
       const sortedByPopularityCut = sortedByPopularity.slice(0, 100);
 
-      const maxSongsByArtist = sortedArtists[0][1];
+      const maxSongsByArtist = 100;
 
       setTotalEstadisticas((prevEstadisticas) => ({
         ...prevEstadisticas,
@@ -138,21 +137,51 @@ const TopTracks = () => {
     }
   }, [tracks]);
 
-  function convertMsToMinutesSeconds(ms) {
+  const convertMsToMinutesSeconds = (ms) => {
     const minutes = Math.floor(ms / 60000);
     const seconds = Math.floor((ms % 60000) / 1000);
     return `${minutes}m${seconds}s`;
-  }
+  };
+
+  const trackCardView = (tracks) => {
+    return tracks?.map((track,index) => (
+      <div key={track.id}>
+        <div className="card">
+          <div className="card-content">
+            <div className="media">
+              <div className="media-left">
+                <figure className="image is-48x48">
+                  <img
+                    style={{ borderRadius: "10px" }}
+                    src={track.album?.images[0]?.url}
+                    alt="Artist image"
+                  />
+                </figure>
+              </div>
+              <div className="media-content">
+                <p className="title is-4">{track.name}</p>
+                <p className="subtitle is-6">
+                  {track.artists.map((artist) => artist.name).join(", ")}
+                </p>
+              </div>
+              <div className="media-rigth">
+                <p><strong className="has-text-success">{index+1}</strong></p>
+                <a href={track.external_urls?.spotify} target="_blank">
+                  <FaPlay className="has-text-success" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )).slice(0,50);
+  };
 
   return loadingFirstSongs ? (
     <CircularProgress color="success" />
   ) : (
-    <div className={styles.main}>
-      <h2 style={{ marginTop: ".5em", marginBottom: "0.25em" }}>
-        Estadísticas
-      </h2>
-
-      {estadisticas.totalPistasChecked !== estadisticas.totalTracks && (
+    <>
+    {estadisticas.totalPistasChecked !== estadisticas.totalTracks && (
         <progress
           className="progress is-success is-small"
           value={
@@ -238,91 +267,18 @@ const TopTracks = () => {
       <div className="columns">
         <div className="column">
           <h1>Canciones por artista</h1>
-          <table className="table is-fullwidth">
-            <thead>
-              <tr>
-                <th style={{ width: "10%" }}>Nª</th>
-                <th style={{ width: "40%" }}>Artista</th>
-                <th style={{ width: "40%" }}>Canciones</th>
-                <th style={{ width: "10%" }}>Número</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(estadisticas.artists).map((item) => (
-                <tr key={item[0]}>
-                  <td>{Number(item[0]) + 1}</td>
-                  <td>{item[1][0]}</td>
-                  <td>
-                    <div className={styles.divNroCanciones}>
-                      <progress
-                        className="progress is-success is-small"
-                        value={item[1][1] ? item[1][1] : 0}
-                        max={estadisticas.maxSongsByArtist}
-                      />
-                    </div>
-                  </td>
-                  <td>{item[1][1]}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          
         </div>
         <div className="column">
           <h1>Canciones con más popularidad</h1>
-          <table className="table is-fullwidth">
-            <thead>
-              <tr>
-                <th>Nª</th>
-                <th>Canción</th>
-                <th>Popularidad</th>
-              </tr>
-            </thead>
-            <tbody>
-              {estadisticas.sortedByPopularityCut?.map((track, index) => (
-                <tr key={track.id}>
-                  <td>{index + 1}</td>
-                  <td>
-                    {track.name} By{" "}
-                    {track.artists.map((artist) => artist.name).join(", ")}
-                  </td>
-                  <td>
-                    <progress
-                      className="progress is-success is-small"
-                      value={track?.popularity}
-                      max={100}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {trackCardView(estadisticas.sortedByPopularityCut)}
         </div>
         <div className="column">
           <h1>Tus pistas más escuchadas</h1>
-          <table className="table is-fullwidth">
-            <thead>
-              <tr>
-                <th>Nª</th>
-                <th>Canción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tracks
-                .map((track, index) => (
-                  <tr key={`table2${track.id}`}>
-                    <td>{index + 1}</td>
-                    <td>
-                      {track.name} By{" "}
-                      {track.artists.map((artist) => artist.name).join(", ")}
-                    </td>
-                  </tr>
-                ))
-                .slice(0, 100)}
-            </tbody>
-          </table>
+          {trackCardView(tracks)}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
