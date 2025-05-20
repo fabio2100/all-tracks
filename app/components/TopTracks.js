@@ -9,7 +9,7 @@ import { FaPlay } from "react-icons/fa";
 
 const TopTracks = () => {
   const [tracks, setTracks] = useState([]);
-  const [estadisticas, setTotalEstadisticas] = useState({
+  const [estadisticas, setEstadisticas] = useState({
     artists: {},
   });
   const access_token = Cookies.get("spotify_access_token");
@@ -40,7 +40,7 @@ const TopTracks = () => {
 
         if (!estadisticas.hasOwnProperty("totalTracks")) {
           estadisticas.totalTracks = response.data.total; // Asigna el valor que desees
-          setTotalEstadisticas((prevEstadisticas) => ({
+          setEstadisticas((prevEstadisticas) => ({
             ...prevEstadisticas,
             totalTracks: response.data.total,
           }));
@@ -67,10 +67,11 @@ const TopTracks = () => {
   useEffect(() => {
     if (tracks.length > 0) {
       const trackCountByArtist = tracks.reduce((acc, track) => {
+        const imgAlbum = track.album?.images[0]?.url
         track.artists.forEach((artist) => {
           if (!acc[artist.id]) {
-            acc[artist.id] = { id: artist.id, name: artist.name, count: 0 };
-        }
+            acc[artist.id] = { id: artist.id, name: artist.name, count: 0, urlImg: imgAlbum, urlArtist:artist.external_urls.spotify };
+          }
           acc[artist.id].count++;
         });
         return acc;
@@ -107,16 +108,16 @@ const TopTracks = () => {
         (track) => track.artists.length === maxArtistsCount
       );
 
-      const sortedArtists = Object.entries(trackCountByArtist)
-        .sort((a, b) => b.count - a.count)
+      const sortedArtists = Object.values(trackCountByArtist).sort(
+        (a, b) => b.count - a.count
+      );
       let sortedByPopularity = [];
       sortedByPopularity = [...tracks];
       sortedByPopularity.sort((a, b) => b.popularity - a.popularity);
       const sortedByPopularityCut = sortedByPopularity.slice(0, 100);
-
       const maxSongsByArtist = 100;
 
-      setTotalEstadisticas((prevEstadisticas) => ({
+      setEstadisticas((prevEstadisticas) => ({
         ...prevEstadisticas,
         artists: sortedArtists,
         totalPistasChecked: tracks.length,
@@ -143,45 +144,107 @@ const TopTracks = () => {
     return `${minutes}m${seconds}s`;
   };
 
-  const trackCardView = (tracks) => {
-    return tracks?.map((track,index) => (
-      <div key={track.id}>
-        <div className="card">
-          <div className="card-content">
-            <div className="media">
-              <div className="media-left">
-                <figure className="image is-48x48">
-                  <img
-                    style={{ borderRadius: "10px" }}
-                    src={track.album?.images[0]?.url}
-                    alt="Artist image"
-                  />
-                </figure>
-              </div>
-              <div className="media-content">
-                <p className="title is-4">{track.name}</p>
-                <p className="subtitle is-6">
-                  {track.artists.map((artist) => artist.name).join(", ")}
-                </p>
-              </div>
-              <div className="media-rigth">
-                <p><strong className="has-text-success">{index+1}</strong></p>
-                <a href={track.external_urls?.spotify} target="_blank">
-                  <FaPlay className="has-text-success" />
-                </a>
+  const TrackCardView = ({ tracks }) => {
+    if (!tracks || tracks.length === 0) {
+      return null; // No renderiza nada si tracks está vacío o undefined
+    }
+
+    return (
+      <div>
+        {tracks.slice(0, 50).map((track, index) => (
+          <div key={track.id}>
+            <div className="card">
+              <div className="card-content">
+                <div className="media">
+                  <div className="media-left">
+                    <figure className="image is-48x48">
+                      <img
+                        style={{ borderRadius: "10px" }}
+                        src={track.album?.images[0]?.url}
+                        alt="Artist image"
+                      />
+                    </figure>
+                  </div>
+                  <div className="media-content">
+                    <p className="title is-4">{track.name}</p>
+                    <p className="subtitle is-6">
+                      {track.artists.map((artist) => artist.name).join(", ")}
+                    </p>
+                  </div>
+                  <div className="media-right">
+                    <p>
+                      <strong className="has-text-success">{index + 1}</strong>
+                    </p>
+                    <a
+                      href={track.external_urls?.spotify}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FaPlay className="has-text-success" />
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        ))}
       </div>
-    )).slice(0,50);
+    );
+  };
+
+  const ArtistList = ({ artistas }) => {
+    if (
+      !artistas ||
+      artistas.length === 0 ||
+      typeof artistas.length === "undefined"
+    ) {
+      return null; // No muestra nada si no hay datos
+    }
+
+    return (
+      <div>
+        {artistas.map((artist,index) => (
+          <div key={artist.id} className="card">
+            <div className="card-content">
+              <div className="media">
+                <div className="media-left">
+                    <figure className="image is-48x48">
+                      <img
+                        style={{ borderRadius: "10px" }}
+                        src={artist.urlImg}
+                        alt="Artist image"
+                      />
+                    </figure>
+                  </div>
+                <div className="media-content">
+                  <p className="title is-4">{artist.name}</p>
+                  <p className="subtitle is-6">Canciones: {artist.count}</p>
+                </div>
+                <div className="media-right">
+                    <p>
+                      <strong className="has-text-success">{index + 1}</strong>
+                    </p>
+                    <a
+                      href={artist.urlArtist}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FaPlay className="has-text-success" />
+                    </a>
+                  </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return loadingFirstSongs ? (
     <CircularProgress color="success" />
   ) : (
     <>
-    {estadisticas.totalPistasChecked !== estadisticas.totalTracks && (
+      {estadisticas.totalPistasChecked !== estadisticas.totalTracks && (
         <progress
           className="progress is-success is-small"
           value={
@@ -267,15 +330,15 @@ const TopTracks = () => {
       <div className="columns">
         <div className="column">
           <h1>Canciones por artista</h1>
-          
+          <ArtistList artistas={estadisticas?.artists} />
         </div>
         <div className="column">
           <h1>Canciones con más popularidad</h1>
-          {trackCardView(estadisticas.sortedByPopularityCut)}
+          <TrackCardView tracks={estadisticas?.sortedByPopularityCut} />
         </div>
         <div className="column">
           <h1>Tus pistas más escuchadas</h1>
-          {trackCardView(tracks)}
+          <TrackCardView tracks={tracks} />
         </div>
       </div>
     </>
