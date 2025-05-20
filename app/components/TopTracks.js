@@ -207,7 +207,7 @@ const TopTracks = () => {
 
     return (
       <div>
-        {artistas.map((artist, index) => (
+        {artistas.slice(0,50).map((artist, index) => (
           <div key={artist.id} className="card">
             <div className="card-content">
               <div className="media">
