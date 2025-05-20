@@ -67,10 +67,16 @@ const TopTracks = () => {
   useEffect(() => {
     if (tracks.length > 0) {
       const trackCountByArtist = tracks.reduce((acc, track) => {
-        const imgAlbum = track.album?.images[0]?.url
+        const imgAlbum = track.album?.images[0]?.url;
         track.artists.forEach((artist) => {
           if (!acc[artist.id]) {
-            acc[artist.id] = { id: artist.id, name: artist.name, count: 0, urlImg: imgAlbum, urlArtist:artist.external_urls.spotify };
+            acc[artist.id] = {
+              id: artist.id,
+              name: artist.name,
+              count: 0,
+              urlImg: imgAlbum,
+              urlArtist: artist.external_urls.spotify,
+            };
           }
           acc[artist.id].count++;
         });
@@ -152,37 +158,35 @@ const TopTracks = () => {
     return (
       <div>
         {tracks.slice(0, 50).map((track, index) => (
-          <div key={track.id}>
-            <div className="card">
-              <div className="card-content">
-                <div className="media">
-                  <div className="media-left">
-                    <figure className="image is-48x48">
-                      <img
-                        style={{ borderRadius: "10px" }}
-                        src={track.album?.images[0]?.url}
-                        alt="Artist image"
-                      />
-                    </figure>
-                  </div>
-                  <div className="media-content">
-                    <p className="title is-4">{track.name}</p>
-                    <p className="subtitle is-6">
-                      {track.artists.map((artist) => artist.name).join(", ")}
-                    </p>
-                  </div>
-                  <div className="media-right">
-                    <p>
-                      <strong className="has-text-success">{index + 1}</strong>
-                    </p>
-                    <a
-                      href={track.external_urls?.spotify}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <FaPlay className="has-text-success" />
-                    </a>
-                  </div>
+          <div className="card" key={track.id}>
+            <div className="card-content">
+              <div className="media">
+                <div className="media-left">
+                  <figure className="image is-48x48">
+                    <img
+                      style={{ borderRadius: "10px" }}
+                      src={track.album?.images[0]?.url}
+                      alt="Artist image"
+                    />
+                  </figure>
+                </div>
+                <div className="media-content">
+                  <p className="title is-4">{track.name}</p>
+                  <p className="subtitle is-6">
+                    {track.artists.map((artist) => artist.name).join(", ")}
+                  </p>
+                </div>
+                <div className="media-right">
+                  <p>
+                    <strong className="has-text-success">{index + 1}</strong>
+                  </p>
+                  <a
+                    href={track.external_urls?.spotify}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaPlay className="has-text-success" />
+                  </a>
                 </div>
               </div>
             </div>
@@ -203,35 +207,35 @@ const TopTracks = () => {
 
     return (
       <div>
-        {artistas.map((artist,index) => (
+        {artistas.map((artist, index) => (
           <div key={artist.id} className="card">
             <div className="card-content">
               <div className="media">
                 <div className="media-left">
-                    <figure className="image is-48x48">
-                      <img
-                        style={{ borderRadius: "10px" }}
-                        src={artist.urlImg}
-                        alt="Artist image"
-                      />
-                    </figure>
-                  </div>
+                  <figure className="image is-48x48">
+                    <img
+                      style={{ borderRadius: "10px" }}
+                      src={artist.urlImg}
+                      alt="Artist image"
+                    />
+                  </figure>
+                </div>
                 <div className="media-content">
                   <p className="title is-4">{artist.name}</p>
                   <p className="subtitle is-6">Canciones: {artist.count}</p>
                 </div>
                 <div className="media-right">
-                    <p>
-                      <strong className="has-text-success">{index + 1}</strong>
-                    </p>
-                    <a
-                      href={artist.urlArtist}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <FaPlay className="has-text-success" />
-                    </a>
-                  </div>
+                  <p>
+                    <strong className="has-text-success">{index + 1}</strong>
+                  </p>
+                  <a
+                    href={artist.urlArtist}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaPlay className="has-text-success" />
+                  </a>
+                </div>
               </div>
             </div>
           </div>

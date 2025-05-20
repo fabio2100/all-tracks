@@ -125,80 +125,76 @@ export default function Artistas() {
           ) + 1;
 
         return (
-          <div key={artista.id}>
-            <div className="card">
-              <div className="card-content">
-                <div className="media">
-                  <div className="media-left">
-                    <figure className="image is-48x48">
-                      <img
-                        style={{ borderRadius: "10px" }}
-                        src={artista.images[0]?.url}
-                        alt="Artist image"
-                      />
-                    </figure>
-                  </div>
-                  <div className="media-content">
-                    <p className="title is-4">{artista.name}</p>
+          <div className="card" key={artista.id}>
+            <div className="card-content">
+              <div className="media">
+                <div className="media-left">
+                  <figure className="image is-48x48">
+                    <img
+                      style={{ borderRadius: "10px" }}
+                      src={artista.images[0]?.url}
+                      alt="Artist image"
+                    />
+                  </figure>
+                </div>
+                <div className="media-content">
+                  <p className="title is-4">{artista.name}</p>
 
-                    {process.env.NEXT_PUBLIC_CAROUSEL_CONTAINER === "1" ? (
-                      <div className="subtitle is-size-6">
-                        <InfoRotativa
-                          artista={artista}
-                          tipo={tipo}
-                          posicionFollowers={posicionFollowers}
-                          posicionPopularity={posicionPopularity}
-                          posicionOriginal={posicionOriginal}
-                        />
-                      </div>
-                    ) : (
-                      <p className="subtitle is-size-6">
-                        Popularidad:{" "}
-                        {artista.popularity}
-                        <br />
-                        seguidores:{" "}
-                        {seguidoresAUnidades(artista.followers.total)}
-                        <br />
-                        {artista.genres?.length > 0 &&
-                          `géneros: ${artista.genres
-                            ?.map((genre) => genre)
-                            .join(", ")}`}
-                        <br />
-                        {tipo === "sortedByPopularity" && (
-                          <span>
-                            Posición en seguidores: {posicionFollowers} <br />{" "}
-                            Posición en tu lista: {posicionOriginal}
-                          </span>
-                        )}
-                        {tipo === "sortedByFollowers" && (
-                          <span>
-                            Posición en popularidad: {posicionPopularity}
-                            <br />
-                            Posición en tu lista: {posicionOriginal}
-                          </span>
-                        )}
-                        {tipo === "originalArtistas" && (
-                          <span>
-                            Posición en popularidad: {posicionPopularity}
-                            <br />
-                            Posición en seguidores: {posicionFollowers}
-                          </span>
-                        )}
-                      </p>
-                    )}
-                  </div>
-                  <div className="media-rigth">
-                    <p>
-                      <strong className="has-text-success">
-                        {tipo === "originalArtistas" && posicionOriginal}
-                        {tipo === "sortedByFollowers" && posicionFollowers}
-                        {tipo === "sortedByPopularity" && posicionPopularity}
-                      </strong>
+                  {process.env.NEXT_PUBLIC_CAROUSEL_CONTAINER === "1" ? (
+                    <div className="subtitle is-size-6">
+                      <InfoRotativa
+                        artista={artista}
+                        tipo={tipo}
+                        posicionFollowers={posicionFollowers}
+                        posicionPopularity={posicionPopularity}
+                        posicionOriginal={posicionOriginal}
+                      />
+                    </div>
+                  ) : (
+                    <p className="subtitle is-size-6">
+                      Popularidad: {artista.popularity}
+                      <br />
+                      seguidores: {seguidoresAUnidades(artista.followers.total)}
+                      <br />
+                      {artista.genres?.length > 0 &&
+                        `géneros: ${artista.genres
+                          ?.map((genre) => genre)
+                          .join(", ")}`}
+                      <br />
+                      {tipo === "sortedByPopularity" && (
+                        <span>
+                          Posición en seguidores: {posicionFollowers} <br />{" "}
+                          Posición en tu lista: {posicionOriginal}
+                        </span>
+                      )}
+                      {tipo === "sortedByFollowers" && (
+                        <span>
+                          Posición en popularidad: {posicionPopularity}
+                          <br />
+                          Posición en tu lista: {posicionOriginal}
+                        </span>
+                      )}
+                      {tipo === "originalArtistas" && (
+                        <span>
+                          Posición en popularidad: {posicionPopularity}
+                          <br />
+                          Posición en seguidores: {posicionFollowers}
+                        </span>
+                      )}
                     </p>
-                    <a href={artista.external_urls?.spotify} target="_blank">
-                      <FaPlay className="has-text-success" />
-                    </a>
-                  </div>
+                  )}
+                </div>
+                <div className="media-rigth">
+                  <p>
+                    <strong className="has-text-success">
+                      {tipo === "originalArtistas" && posicionOriginal}
+                      {tipo === "sortedByFollowers" && posicionFollowers}
+                      {tipo === "sortedByPopularity" && posicionPopularity}
+                    </strong>
+                  </p>
+                  <a href={artista.external_urls?.spotify} target="_blank">
+                    <FaPlay className="has-text-success" />
+                  </a>
                 </div>
               </div>
             </div>
@@ -215,9 +211,7 @@ export default function Artistas() {
     posicionOriginal,
   }) => {
     const elementos = [
-      <>
-        Popularidad: {artista.popularity}
-      </>,
+      <>Popularidad: {artista.popularity}</>,
       <>Seguidores: {seguidoresAUnidades(artista.followers.total)}</>,
       <>Géneros: {artista.genres?.length > 0 && artista.genres.join(", ")}</>,
       ...(tipo === "sortedByPopularity"
