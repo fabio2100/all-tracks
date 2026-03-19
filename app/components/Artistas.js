@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { ScatterChart } from "@mui/x-charts";
+import { ScatterChart, BarChart } from "@mui/x-charts";
 import { CircularProgress, createTheme, ThemeProvider } from "@mui/material";
 import styles from "../page.module.css";
 import { FaPlay } from "react-icons/fa";
@@ -296,10 +296,12 @@ export default function Artistas() {
   };
 
   const GenreAccordion = ({ genres }) => {
+    const [expanded, setExpanded] = useState(false);
+    const visible = expanded ? genres : genres.slice(0, 10);
     return (
       <ThemeProvider theme={darkTheme}>
         <div>
-          {genres.map(({ genre, count, artists }) => (
+          {visible.map(({ genre, count, artists }) => (
             <Accordion key={genre}>
               <AccordionSummary expandIcon={<MdExpandMore />}>
                 <p>
@@ -311,6 +313,14 @@ export default function Artistas() {
               </AccordionDetails>
             </Accordion>
           ))}
+          {genres.length > 10 && (
+            <button
+              className="button is-small is-success mt-2"
+              onClick={() => setExpanded((e) => !e)}
+            >
+              {expanded ? "−" : "+"}
+            </button>
+          )}
         </div>
       </ThemeProvider>
     );
@@ -410,7 +420,26 @@ export default function Artistas() {
       </div>
       <h2>Géneros más escuchados</h2>
 
+            {estadisticas.genres.length > 0 && (
+        <ThemeProvider theme={darkTheme}>
+          <BarChart
+            height={300}
+            xAxis={[{
+              scaleType: "band",
+              data: estadisticas.genres.slice(0, 10).map((g) => g.genre),
+              tickLabelStyle: { fontSize: 10 },
+            }]}
+            series={[{
+              data: estadisticas.genres.slice(0, 10).map((g) => g.count),
+              color: "#1db954",
+              label: "Artistas",
+            }]}
+          />
+        </ThemeProvider>
+      )}
+
       <GenreAccordion genres={estadisticas.genres} />
+
 
       <h2>Gráfico Seguidores - Popularidad</h2>
       <ThemeProvider theme={darkTheme}>
