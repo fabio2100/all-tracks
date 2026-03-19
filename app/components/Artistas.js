@@ -202,7 +202,7 @@ export default function Artistas() {
           </div>
         );
       })
-      .slice(0, 50);
+      .slice(0, 10);
 
   const InfoRotativa = ({
     artista,
