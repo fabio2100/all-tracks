@@ -216,12 +216,14 @@ export default function Artistas() {
         );
         })}
         {filtered.length > 10 && (
-          <button
-            className="button is-small is-success mt-2"
-            onClick={() => toggleView(tipo)}
-          >
-            {expanded ? "−" : "+"}
-          </button>
+          <div className="has-text-centered pb-4">
+            <button
+              className="button is-small is-success mt-2"
+              onClick={() => toggleView(tipo)}
+            >
+              {expanded ? "−" : "+"}
+            </button>
+          </div>
         )}
       </>
     );
@@ -314,12 +316,14 @@ export default function Artistas() {
             </Accordion>
           ))}
           {genres.length > 10 && (
-            <button
-              className="button is-small is-success mt-2"
-              onClick={() => setExpanded((e) => !e)}
-            >
-              {expanded ? "−" : "+"}
-            </button>
+            <div className="has-text-centered pb-4">
+              <button
+                className="button is-small is-success mt-2"
+                onClick={() => setExpanded((e) => !e)}
+              >
+                {expanded ? "−" : "+"}
+              </button>
+            </div>
           )}
         </div>
       </ThemeProvider>
