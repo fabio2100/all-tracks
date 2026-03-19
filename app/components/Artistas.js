@@ -27,6 +27,15 @@ export default function Artistas() {
   const [loadingFirstArtists, setLoadingFirstArtists] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedView, setSelectedView] = useState("originalArtistas");
+  const [expandedViews, setExpandedViews] = useState({
+    originalArtistas: false,
+    sortedByFollowers: false,
+    sortedByPopularity: false,
+  });
+
+  const toggleView = (tipo) => {
+    setExpandedViews((prev) => ({ ...prev, [tipo]: !prev[tipo] }));
+  };
 
   const seguidoresAUnidades = (cantidad) => {
     if (Math.floor(cantidad) / 1000000 > 1) {
@@ -111,9 +120,13 @@ export default function Artistas() {
     fetchAllArtists();
   }, [access_token]);
 
-  const artistCardView = (artists, tipo) =>
-    filterArtists(artists, searchTerm)
-      .map((artista, index) => {
+  const artistCardView = (artists, tipo) => {
+    const filtered = filterArtists(artists, searchTerm);
+    const expanded = expandedViews[tipo];
+    const visible = expanded ? filtered : filtered.slice(0, 10);
+    return (
+      <>
+        {visible.map((artista, index) => {
         const posicionOriginal =
           estadisticas.originalArtistas.findIndex((a) => a.id === artista.id) +
           1;
@@ -201,8 +214,18 @@ export default function Artistas() {
             </div>
           </div>
         );
-      })
-      .slice(0, 10);
+        })}
+        {filtered.length > 10 && (
+          <button
+            className="button is-small is-success mt-2"
+            onClick={() => toggleView(tipo)}
+          >
+            {expanded ? "−" : "+"}
+          </button>
+        )}
+      </>
+    );
+  };
 
   const InfoRotativa = ({
     artista,

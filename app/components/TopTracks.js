@@ -152,13 +152,15 @@ const TopTracks = () => {
   };
 
   const TrackCardView = ({ tracks }) => {
+    const [expanded, setExpanded] = useState(false);
     if (!tracks || tracks.length === 0) {
-      return null; // No renderiza nada si tracks está vacío o undefined
+      return null;
     }
+    const visible = expanded ? tracks : tracks.slice(0, 10);
 
     return (
       <div>
-        {tracks.slice(0, 10).map((track, index) => (
+        {visible.map((track, index) => (
           <div className="card" key={track.id}>
             <div className="card-content">
               <div className="media">
@@ -193,22 +195,32 @@ const TopTracks = () => {
             </div>
           </div>
         ))}
+        {tracks.length > 10 && (
+          <button
+            className="button is-small is-success mt-2"
+            onClick={() => setExpanded((e) => !e)}
+          >
+            {expanded ? "−" : "+"}
+          </button>
+        )}
       </div>
     );
   };
 
   const ArtistList = ({ artistas }) => {
+    const [expanded, setExpanded] = useState(false);
     if (
       !artistas ||
       artistas.length === 0 ||
       typeof artistas.length === "undefined"
     ) {
-      return null; // No muestra nada si no hay datos
+      return null;
     }
+    const visible = expanded ? artistas : artistas.slice(0, 10);
 
     return (
       <div>
-        {artistas.slice(0,10).map((artist, index) => (
+        {visible.map((artist, index) => (
           <div key={artist.id} className="card">
             <div className="card-content">
               <div className="media">
@@ -241,6 +253,14 @@ const TopTracks = () => {
             </div>
           </div>
         ))}
+        {artistas.length > 10 && (
+          <button
+            className="button is-small is-success mt-2"
+            onClick={() => setExpanded((e) => !e)}
+          >
+            {expanded ? "−" : "+"}
+          </button>
+        )}
       </div>
     );
   };
