@@ -15,6 +15,7 @@ const TopTracks = () => {
   const access_token = Cookies.get("spotify_access_token");
   const isDevelopment = process.env.NEXT_PUBLIC_DEVELOPMENT === "1";
   const [loadingFirstSongs, setLoadingFirstSongs] = useState(true);
+  const [selectedColumn, setSelectedColumn] = useState("byArtist");
 
   useEffect(() => {
     const fetchTopTracks = async (offset = 0) => {
@@ -331,7 +332,39 @@ const TopTracks = () => {
           </table>
         </div>
       </div>
-      <div className="columns">
+      {/* Mobile/tablet: select + single column */}
+      <div className="is-hidden-desktop">
+        <div className="control mb-4">
+          <div className="select is-fullwidth">
+            <select value={selectedColumn} onChange={(e) => setSelectedColumn(e.target.value)}>
+              <option value="byArtist">Canciones por artista</option>
+              <option value="byPopularity">Canciones con más popularidad</option>
+              <option value="mostListened">Tus pistas más escuchadas</option>
+            </select>
+          </div>
+        </div>
+        {selectedColumn === "byArtist" && (
+          <>
+            <h1>Canciones por artista</h1>
+            <ArtistList artistas={estadisticas?.artists} />
+          </>
+        )}
+        {selectedColumn === "byPopularity" && (
+          <>
+            <h1>Canciones con más popularidad</h1>
+            <TrackCardView tracks={estadisticas?.sortedByPopularityCut} />
+          </>
+        )}
+        {selectedColumn === "mostListened" && (
+          <>
+            <h1>Tus pistas más escuchadas</h1>
+            <TrackCardView tracks={tracks} />
+          </>
+        )}
+      </div>
+
+      {/* Desktop: 3-column layout */}
+      <div className="columns is-hidden-touch">
         <div className="column">
           <h1>Canciones por artista</h1>
           <ArtistList artistas={estadisticas?.artists} />

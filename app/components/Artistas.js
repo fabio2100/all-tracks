@@ -26,6 +26,7 @@ export default function Artistas() {
   });
   const [loadingFirstArtists, setLoadingFirstArtists] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedView, setSelectedView] = useState("originalArtistas");
 
   const seguidoresAUnidades = (cantidad) => {
     if (Math.floor(cantidad) / 1000000 > 1) {
@@ -335,7 +336,39 @@ export default function Artistas() {
           </tbody>
         </table>
       </div>
-      <div className="columns">
+      {/* Mobile/tablet: select + single column */}
+      <div className="is-hidden-desktop">
+        <div className="control mb-4">
+          <div className="select is-fullwidth">
+            <select value={selectedView} onChange={(e) => setSelectedView(e.target.value)}>
+              <option value="originalArtistas">Tus artistas más escuchados</option>
+              <option value="sortedByFollowers">Ordenados por seguidores</option>
+              <option value="sortedByPopularity">Ordenados por popularidad</option>
+            </select>
+          </div>
+        </div>
+        {selectedView === "originalArtistas" && (
+          <>
+            <h2>Tus artistas más escuchados</h2>
+            {artistCardView(estadisticas.originalArtistas, "originalArtistas")}
+          </>
+        )}
+        {selectedView === "sortedByFollowers" && (
+          <>
+            <h2>Ordenados por seguidores</h2>
+            {artistCardView(estadisticas.sortedByFollowers, "sortedByFollowers")}
+          </>
+        )}
+        {selectedView === "sortedByPopularity" && (
+          <>
+            <h2>Ordenados por popularidad</h2>
+            {artistCardView(estadisticas.sortedByPopularity, "sortedByPopularity")}
+          </>
+        )}
+      </div>
+
+      {/* Desktop: 3-column layout */}
+      <div className="columns is-hidden-touch">
         <div className="column">
           <h2>Tus artistas más escuchados</h2>
           {artistCardView(estadisticas.originalArtistas, "originalArtistas")}
