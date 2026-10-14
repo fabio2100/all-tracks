@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { ScatterChart, BarChart } from "@mui/x-charts";
-import { CircularProgress, createTheme, ThemeProvider } from "@mui/material";
+import { CircularProgress, LinearProgress, createTheme, ThemeProvider } from "@mui/material";
 import styles from "../page.module.css";
 import { FaPlay } from "react-icons/fa";
 import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
@@ -35,6 +35,37 @@ export default function Artistas() {
 
   const toggleView = (tipo) => {
     setExpandedViews((prev) => ({ ...prev, [tipo]: !prev[tipo] }));
+  };
+
+  const maxFollowers = Math.max(
+    1,
+    ...(estadisticas.originalArtistas || []).map((a) => a.followers?.total || 0)
+  );
+
+  const renderFollowerCircle = (followers) => {
+    const f = Math.max(0, followers || 0);
+    // log scale: map [0..maxFollowers] -> [1..100]
+    const percent = f === 0 ? 1 : Math.max(1, (Math.log10(f) / Math.log10(maxFollowers)) * 100);
+    const minPx = 18;
+    const maxPx = 80;
+    const size = Math.round(minPx + (percent / 100) * (maxPx - minPx));
+    return (
+      <div
+        style={{
+          width: size,
+          height: size,
+          borderRadius: "50%",
+          background: "#1e90ff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "white",
+          fontWeight: 700,
+        }}
+      >
+        {seguidoresAUnidades(f)}
+      </div>
+    );
   };
 
   const seguidoresAUnidades = (cantidad) => {
@@ -165,37 +196,57 @@ export default function Artistas() {
                       />
                     </div>
                   ) : (
-                    <p className="subtitle is-size-6">
-                      Popularidad: {artista.popularity}
-                      <br />
-                      seguidores: {seguidoresAUnidades(artista.followers.total)}
-                      <br />
-                      {artista.genres?.length > 0 &&
-                        `géneros: ${artista.genres
-                          ?.map((genre) => genre)
-                          .join(", ")}`}
-                      <br />
-                      {tipo === "sortedByPopularity" && (
-                        <span>
-                          Posición en seguidores: {posicionFollowers} <br />{" "}
-                          Posición en tu lista: {posicionOriginal}
-                        </span>
-                      )}
-                      {tipo === "sortedByFollowers" && (
-                        <span>
-                          Posición en popularidad: {posicionPopularity}
-                          <br />
-                          Posición en tu lista: {posicionOriginal}
-                        </span>
-                      )}
-                      {tipo === "originalArtistas" && (
-                        <span>
-                          Posición en popularidad: {posicionPopularity}
-                          <br />
-                          Posición en seguidores: {posicionFollowers}
-                        </span>
-                      )}
-                    </p>
+                    <div className="subtitle is-size-6">
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                        <div style={{ textAlign: "center", fontWeight: 700 }}>Seguidores</div>
+                        <div style={{ marginTop: 8 }}>{renderFollowerCircle(artista.followers.total)}</div>
+                      </div>
+
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 12 }}>
+                        <div style={{ textAlign: "center", fontWeight: 700 }}>Popularidad</div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 6, width: "100%" }}>
+                          <div style={{ flex: 1 }}>
+                            <LinearProgress
+                              variant="determinate"
+                              value={artista.popularity}
+                              style={{ height: 8, borderRadius: 4 }}
+                              color="primary"
+                            />
+                          </div>
+                          <div style={{ minWidth: 40, display: "flex", alignItems: "center", justifyContent: "center", paddingLeft: 8 }}>
+                            <strong>{artista.popularity}</strong>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ marginTop: 8 }}>
+                        {artista.genres?.length > 0 && (
+                          <>
+                            <strong>Géneros:</strong> {artista.genres?.map((genre) => genre).join(", ")}
+                            <br />
+                          </>
+                        )}
+                        {tipo === "sortedByPopularity" && (
+                          <span>
+                            <strong>Posición en seguidores:</strong> {posicionFollowers} <br /> <strong>Posición en tu lista:</strong> {posicionOriginal}
+                          </span>
+                        )}
+                        {tipo === "sortedByFollowers" && (
+                          <span>
+                            <strong>Posición en popularidad:</strong> {posicionPopularity}
+                            <br />
+                            <strong>Posición en tu lista:</strong> {posicionOriginal}
+                          </span>
+                        )}
+                        {tipo === "originalArtistas" && (
+                          <span>
+                            <strong>Posición en popularidad:</strong> {posicionPopularity}
+                            <br />
+                            <strong>Posición en seguidores:</strong> {posicionFollowers}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
                 <div className="media-rigth">
@@ -237,25 +288,25 @@ export default function Artistas() {
     posicionOriginal,
   }) => {
     const elementos = [
-      <>Popularidad: {artista.popularity}</>,
-      <>Seguidores: {seguidoresAUnidades(artista.followers.total)}</>,
-      <>Géneros: {artista.genres?.length > 0 && artista.genres.join(", ")}</>,
+      <><strong>Popularidad:</strong> {artista.popularity}</>,
+      <><strong>Seguidores:</strong> {seguidoresAUnidades(artista.followers.total)}</>,
+      <><strong>Géneros:</strong> {artista.genres?.length > 0 && artista.genres.join(', ')}</>,
       ...(tipo === "sortedByPopularity"
         ? [
-            <>Posición en seguidores: {posicionFollowers}</>,
-            <>Posición en tu lista: {posicionOriginal}</>,
+            <><strong>Posición en seguidores:</strong> {posicionFollowers}</>,
+            <><strong>Posición en tu lista:</strong> {posicionOriginal}</>,
           ]
         : []),
       ...(tipo === "sortedByFollowers"
         ? [
-            <>Posición en popularidad: {posicionPopularity}</>,
-            <>Posición en tu lista: {posicionOriginal}</>,
+            <><strong>Posición en popularidad:</strong> {posicionPopularity}</>,
+            <><strong>Posición en tu lista:</strong> {posicionOriginal}</>,
           ]
         : []),
       ...(tipo === "originalArtistas"
         ? [
-            <>Posición en popularidad: {posicionPopularity}</>,
-            <>Posición en seguidores: {posicionFollowers}</>,
+            <><strong>Posición en popularidad:</strong> {posicionPopularity}</>,
+            <><strong>Posición en seguidores:</strong> {posicionFollowers}</>,
           ]
         : []),
     ];
