@@ -288,9 +288,29 @@ export default function Artistas() {
     posicionOriginal,
   }) => {
     const elementos = [
-      <><strong>Popularidad:</strong> {artista.popularity}</>,
-      <><strong>Seguidores:</strong> {seguidoresAUnidades(artista.followers.total)}</>,
-      <><strong>Géneros:</strong> {artista.genres?.length > 0 && artista.genres.join(', ')}</>,
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ textAlign: "center", fontWeight: 700 }}>Seguidores</div>
+        <div style={{ marginTop: 8 }}>{renderFollowerCircle(artista.followers.total)}</div>
+      </div>,
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ textAlign: "center", fontWeight: 700 }}>Popularidad</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 6, width: "100%" }}>
+          <div style={{ flex: 1 }}>
+            <LinearProgress
+              variant="determinate"
+              value={artista.popularity}
+              style={{ height: 8, borderRadius: 4 }}
+              color="primary"
+            />
+          </div>
+          <div style={{ minWidth: 40, display: "flex", alignItems: "center", justifyContent: "center", paddingLeft: 8 }}>
+            <strong>{artista.popularity}</strong>
+          </div>
+        </div>
+      </div>,
+      <>
+        <strong>Géneros:</strong> {artista.genres?.length > 0 ? artista.genres.join(", ") : "-"}
+      </>,
       ...(tipo === "sortedByPopularity"
         ? [
             <><strong>Posición en seguidores:</strong> {posicionFollowers}</>,
