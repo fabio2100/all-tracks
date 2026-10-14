@@ -151,6 +151,42 @@ const TopTracks = () => {
     return `${minutes}m${seconds}s`;
   };
 
+  const renderDots = (count) => {
+    if (!count || count <= 0) return null;
+    const dotsArr = [];
+    for (let i = 0; i < count; i++) {
+      dotsArr.push(
+        <span
+          key={i}
+          style={{
+            width: 12,
+            height: 12,
+            borderRadius: 999,
+            background: "#1e90ff",
+            display: "inline-block",
+          }}
+        />
+      );
+    }
+
+    return (
+      <div style={{ display: "flex", alignItems: "stretch", gap: 12, marginTop: 6 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, flex: 1 }}>{dotsArr}</div>
+        <div
+          style={{
+            alignSelf: "stretch",
+            display: "flex",
+            alignItems: "center",
+            paddingLeft: 8,
+            minWidth: 40,
+          }}
+        >
+          <strong>{count}</strong>
+        </div>
+      </div>
+    );
+  };
+
   const TrackCardView = ({ tracks }) => {
     const [expanded, setExpanded] = useState(false);
     if (!tracks || tracks.length === 0) {
@@ -237,7 +273,7 @@ const TopTracks = () => {
                 </div>
                 <div className="media-content">
                   <p className="title is-4">{artist.name}</p>
-                  <p className="subtitle is-6">Canciones: {artist.count}</p>
+                  <div className="subtitle is-6">{renderDots(artist.count)}</div>
                 </div>
                 <div className="media-right">
                   <p>
