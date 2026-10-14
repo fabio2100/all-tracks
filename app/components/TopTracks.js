@@ -4,7 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import styles from "../page.module.css";
 import Cookies from "js-cookie";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, LinearProgress } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
 
 const TopTracks = () => {
@@ -187,7 +187,7 @@ const TopTracks = () => {
     );
   };
 
-  const TrackCardView = ({ tracks }) => {
+  const TrackCardView = ({ tracks, showPopularity }) => {
     const [expanded, setExpanded] = useState(false);
     if (!tracks || tracks.length === 0) {
       return null;
@@ -214,6 +214,21 @@ const TopTracks = () => {
                   <p className="subtitle is-6">
                     {track.artists.map((artist) => artist.name).join(", ")}
                   </p>
+                  {showPopularity && (
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 6 }}>
+                      <div style={{ flex: 1 }}>
+                        <LinearProgress
+                          variant="determinate"
+                          value={track.popularity}
+                          style={{ height: 8, borderRadius: 4 }}
+                          color="primary"
+                        />
+                      </div>
+                      <div style={{ minWidth: 40, display: "flex", alignItems: "center", justifyContent: "center", paddingLeft: 8 }}>
+                        <strong>{track.popularity}</strong>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="media-right">
                   <p>
@@ -412,7 +427,7 @@ const TopTracks = () => {
         {selectedColumn === "byPopularity" && (
           <>
             <h1>Canciones con más popularidad</h1>
-            <TrackCardView tracks={estadisticas?.sortedByPopularityCut} />
+            <TrackCardView tracks={estadisticas?.sortedByPopularityCut} showPopularity={true} />
           </>
         )}
         {selectedColumn === "mostListened" && (
@@ -431,7 +446,7 @@ const TopTracks = () => {
         </div>
         <div className="column">
           <h1>Canciones con más popularidad</h1>
-          <TrackCardView tracks={estadisticas?.sortedByPopularityCut} />
+          <TrackCardView tracks={estadisticas?.sortedByPopularityCut} showPopularity={true} />
         </div>
         <div className="column">
           <h1>Tus pistas más escuchadas</h1>
