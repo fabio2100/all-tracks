@@ -6,6 +6,7 @@ import styles from "../page.module.css";
 import Cookies from "js-cookie";
 import { CircularProgress, LinearProgress } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
+import NumberFlow from "@number-flow/react";
 
 const TopTracks = () => {
   const [tracks, setTracks] = useState([]);
@@ -340,18 +341,24 @@ const TopTracks = () => {
             <tbody>
               <tr>
                 <td>Total de pistas</td>
-                <td>{estadisticas.totalTracks}</td>
+                <td>
+                  <NumberFlow value={Number(estadisticas.totalTracks ?? 0)} />
+                </td>
               </tr>
               {estadisticas.totalTracks !== estadisticas.totalPistasChecked && (
                 <tr>
                   <td>Total de pistas analizadas</td>
-                  <td>{estadisticas.totalPistasChecked}</td>
+                  <td>
+                    <NumberFlow value={Number(estadisticas.totalPistasChecked ?? 0)} />
+                  </td>
                 </tr>
               )}
 
               <tr>
                 <td>Total de artistas</td>
-                <td>{estadisticas.totalArtists}</td>
+                <td>
+                  <NumberFlow value={Number(estadisticas.totalArtists ?? 0)} />
+                </td>
               </tr>
             </tbody>
           </table>

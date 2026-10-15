@@ -7,6 +7,7 @@ import styles from "../page.module.css";
 import { FaPlay } from "react-icons/fa";
 import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { MdExpandMore } from "react-icons/md";
+import NumberFlow from "@number-flow/react";
 
 const darkTheme = createTheme({
   palette: {
@@ -429,17 +430,23 @@ export default function Artistas() {
           <tbody>
             <tr>
               <td>Total de artistas</td>
-              <td>{estadisticas.totalArtists}</td>
+              <td>
+                <NumberFlow value={Number(estadisticas.totalArtists ?? 0)} />
+              </td>
             </tr>
             {estadisticas.totalArtists !== estadisticas.totalArtistsChecked && (
               <tr>
                 <td>Total de artistas analizados</td>
-                <td>{estadisticas.totalArtistsChecked}</td>
+                <td>
+                  <NumberFlow value={Number(estadisticas.totalArtistsChecked ?? 0)} />
+                </td>
               </tr>
             )}
             <tr>
               <td>Total de géneros escuchados</td>
-              <td>{estadisticas.genres.length}</td>
+              <td>
+                <NumberFlow value={Number(estadisticas.genres.length ?? 0)} />
+              </td>
             </tr>
           </tbody>
         </table>
